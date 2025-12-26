@@ -1,8 +1,13 @@
 from ollama import chat
 from ollama import ChatResponse
+from ollama import Client
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import pandas as pd
+
+#  Create custom client
+client = Client(
+    host='http://192.168.1.47:11434')
 
 #  Hide tkinter
 Tk().withdraw()
@@ -23,7 +28,7 @@ freshness_text = df2.to_string(index=False)
 print(f'**************************************************************\n{dtl_text}\n\n{freshness_text}\n**************************************************************')
 
 #  Build and send prompt to Ollama
-response: ChatResponse = chat(model='ministral-data-analyst:latest', messages=[
+response: ChatResponse = client.chat(model='ministral-data-analyst:latest', messages=[
     {
         #  for system role tweaks, use modelfile
         'role': 'user',

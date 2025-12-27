@@ -39,15 +39,15 @@ response: ChatResponse = client.chat(model='ministral-data-analyst:latest', mess
     {
         #  for system role tweaks, use modelfile
         'role': 'user',
-        'content': f'Here are the game-only DTL scores:\n{go_dtl_text}'
+        'content': f'Here is the Player SupraMax data:\n{sm_relative_text}'
     },
     {
         'role': 'user',
-        'content': f'Here are the team total SupraMax efforts:\n{sm_team_text}'
+        'content': f'Here is the SupraMax data relative to team totals:\n{sm_team_text}'
     },
     {
         'role': 'user',
-        'content': f'Here are the player personal average(VHI) SupraMax efforts:\n{sm_relative_text}'
+        'content': f'Here is the game-only DTL data:\n{go_dtl_text}'
     }
     ])
 

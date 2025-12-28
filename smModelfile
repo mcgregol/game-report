@@ -30,7 +30,6 @@ AND SO ON...
 NO title!
 """
 
-PARAMETER temperature 0.1
-PARAMETER top_p 0.8
+PARAMETER temperature 0.05
+PARAMETER top_p 0.7
 PARAMETER num_ctx 8192
-

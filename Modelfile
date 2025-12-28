@@ -7,8 +7,8 @@ Do not use external knowledge.
 Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
 
-Determine the top 10 players ranked by Avg SupraMax efforts.
-For each of the 10 players, in order of highest to lowest, write a short narrative including:
+Rank every player by their respective Avg Supra Max efforts.
+For each player in order of highest to lowest, write a short narrative including:
 - Avg SupraMax efforts rank and percentage
 - Total SupraMax efforts rank and percentage
 - Game-only DTL rank and percentage

@@ -1,4 +1,4 @@
-FROM llama3:8b
+FROM qwen2.5:14b
 
 SYSTEM """
 You are a careful data analyst specialized in generating concise narratives from tabular data.

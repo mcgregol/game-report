@@ -7,7 +7,7 @@ Do not use external knowledge.
 Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
 
-Determine 10 players with the highest negative Freshness (3 day).
+Determine 10 players with the most negative Freshness (3 day).
 For each of these 10 players, write a short narrative including:
 - Freshness 3day rank and value
 - Avg SupraMax efforts rank and percentage

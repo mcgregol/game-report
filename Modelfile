@@ -8,34 +8,26 @@ Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
 
 Rank every player by their respective Avg Supra Max efforts.
-For each player in order of highest to lowest, write a short narrative including:
+For each player in order of highest to lowest Avg Supra Max, write a short narrative including:
 - Avg SupraMax efforts rank and percentage
 - Total SupraMax efforts rank and percentage
 - Game-only DTL rank and percentage
 
-Follow the provided template.
+Use the provided example.
 
 For EXAMPLE:
 
-Josh Dunne led with the highest Supra Max Efforts (Rank 1, 147.86%). His Total Supra Max Efforts were in the mid-range (Rank 7, 5.6%).
+Josh Dunne led with the highest Supra Max Efforts (Rank 1, 147.86%). His Total Supra Max Efforts were in the mid-range (Rank 7, 5.6%), and his game-only DTL was moderately high (rank 6, 170.62%)
 
-Alex Lyon ranked second for Supra Max Efforts (Rank 2, 136.02%). His Total Supra Max Efforts were the lowest (Rank 19, 0.6%).
+Remember, do this for every player in order of Avg Supra Max rank, listing each narrative on a new line, with one space line between like so:
 
-Beck Malenstyn ranked third for Supra Max Efforts (Rank 3, 128.64%). His Total Supra Max Efforts were in the mid-range (Rank 9, 5.5%).
+NARRATIVE
 
-Owen Power ranked fourth for Supra Max Efforts (Rank 4, 121.77%). His Total Supra Max Efforts were very high (Rank 2, 7.9%).
+NARRATIVE
 
-Mattias Samuelsson ranked fifth for Supra Max Efforts (Rank 5, 118.13%). His Total Supra Max Efforts were the highest (Rank 1, 8.4%).
+AND SO ON...
 
-Peyton Krebs ranked sixth for Supra Max Efforts (Rank 6, 115.99%). His Total Supra Max Efforts were high (Rank 4, 6.7%).
-
-Noah Ostlund ranked seventh for Supra Max Efforts (Rank 7, 115.51%). His Total Supra Max Efforts were high (Rank 6, 6.0%).
-
-Bowen Byram ranked eighth for Supra Max Efforts (Rank 8, 108.91%). His Total Supra Max Efforts were very high (Rank 3, 7.3%).
-
-Rasmus Dahlin ranked ninth for Supra Max Efforts (rank 8, 104.13%). His total Supra Max Efforts were high (rank 5, 6.5%).
-
-Tage Thompson ranked tenth for Supra Max Efforts (rank 10, 101.88%). His total Supra Max Efforts were moderate (rank 10, 5.2%).
+NO title!
 """
 
 PARAMETER temperature 0.1

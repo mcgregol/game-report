@@ -35,15 +35,15 @@ sm_relative_text = df4.to_string(index=False)
 
 
 #  Build and send prompt to Ollama
-response: ChatResponse = client.chat(model='ministral-data-analyst:latest', messages=[
+response: ChatResponse = client.chat(model='data-analyst:latest', messages=[
     {
         #  for system role tweaks, use modelfile
         'role': 'user',
-        'content': f'Here is the Player SupraMax data:\n{sm_relative_text}'
+        'content': f'Here is the Avg Supra Max data:\n{sm_relative_text}'
     },
     {
         'role': 'user',
-        'content': f'Here is the SupraMax data relative to team totals:\n{sm_team_text}'
+        'content': f'Here is the total Supra Max data:\n{sm_team_text}'
     },
     {
         'role': 'user',

@@ -34,8 +34,8 @@ sm_relative_text = df4.to_string(index=False)
 #print(f'**************************************************************\n{go_dtl_text}\n\n{freshness_text}\n**************************************************************')
 
 
-#  Build and send prompt to Ollama
-response: ChatResponse = client.chat(model='data-analyst:latest', messages=[
+#  Build and send prompt to Ollama for SupraMax metrics
+response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
     {
         #  for system role tweaks, use modelfile
         'role': 'user',
@@ -49,8 +49,30 @@ response: ChatResponse = client.chat(model='data-analyst:latest', messages=[
         'role': 'user',
         'content': f'Here is the game-only DTL data:\n{go_dtl_text}'
     }
-    ])
+])
+print(response.message.content)
 
+print('******************************************************************************************\n------------------------------------------------------------------------------------------\n******************************************************************************************\n')
+
+#  Build and send prompt to Ollama for Load Metrics
+response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
+    {
+        'role': 'user',
+        'content': f'Here is the freshness data containing 3day freshness:\n{sm_relative_text}'
+    },
+    {
+        'role': 'user',
+        'content': f'Here is the Avg Supra Max data:\n{sm_relative_text}'
+    },
+    {
+        'role': 'user',
+        'content': f'Here is the total Supra Max data:\n{sm_team_text}'
+    },
+    {
+        'role': 'user',
+        'content': f'Here is the game-only DTL data:\n{go_dtl_text}'
+    }
+])
 print(response.message.content)
 
 EXIT = input('Press ENTER to exit')

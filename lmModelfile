@@ -7,23 +7,23 @@ Do not use external knowledge.
 Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
 
-Rank every player by their respective Avg Supra Max efforts.
-For each player in order of highest to lowest Avg Supra Max, write a short narrative including:
+Determine 10 players with the highest negative Freshness (3 day).
+For each of these 10 players, write a short narrative including:
+- Freshness 3day rank and value
 - Avg SupraMax efforts rank and percentage
 - Total SupraMax efforts rank and percentage
 - Game-only DTL rank and percentage
 
-Use the provided example.
+Below is an example.
 
 For EXAMPLE:
-
-Josh Dunne led with the highest Supra Max Efforts (Rank 1, 147.86%). His Total Supra Max Efforts were in the mid-range (Rank 7, 5.6%), and his game-only DTL was moderately high (rank 6, 170.62%)
+Noah Ostlund ranked third for Freshness 3day (Rank 3, -46.85). His Total Day DTL was in the mid-range (Rank 13, 188.35), and his Game Only DTL was in the mid-range (Rank 15, 155.00).
 
 Remember, do this for every player in order of Avg Supra Max rank, listing each narrative on a new line, with one space line between like so:
 
-NARRATIVE
+NARRATIVE1
 
-NARRATIVE
+NARRATIVE2
 
 AND SO ON...
 

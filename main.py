@@ -24,14 +24,18 @@ df2 = pd.read_excel(freshness_file)
 df3 = pd.read_excel(sm_team_file)
 df4 = pd.read_excel(sm_relative_file)
 
-#  Convert xlsx to text
-go_dtl_text = df1.to_string(index=False)
-freshness_text = df2.to_string(index=False)
-sm_team_text = df3.to_string(index=False)
-sm_relative_text = df4.to_string(index=False)
+#  Trim off 7day and sort 3day
+df2 = df2.drop(columns=['Freshness (7 day)'])
+df2 = df2.sort_values(by=['Freshness (3 day)'])
+
+#  Convert xlsx to MD
+go_dtl_md = df1.to_markdown(index=False)
+freshness_md = df2.to_markdown(index=False)
+sm_team_md = df3.to_markdown(index=False)
+sm_relative_md = df4.to_markdown(index=False)
 
 #  Print text data for user
-#print(f'**************************************************************\n{go_dtl_text}\n\n{freshness_text}\n**************************************************************')
+print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')
 
 
 #  Build and send prompt to Ollama for SupraMax metrics
@@ -39,15 +43,15 @@ response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
     {
         #  for system role tweaks, use modelfile
         'role': 'user',
-        'content': f'Here is the Avg Supra Max data:\n{sm_relative_text}'
+        'content': f'Here is the Avg Supra Max data:\n{sm_relative_md}'
     },
     {
         'role': 'user',
-        'content': f'Here is the total Supra Max data:\n{sm_team_text}'
+        'content': f'Here is the total Supra Max data:\n{sm_team_md}'
     },
     {
         'role': 'user',
-        'content': f'Here is the game-only DTL data:\n{go_dtl_text}'
+        'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
     }
 ])
 print(response.message.content)
@@ -58,19 +62,19 @@ print('*************************************************************************
 response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
     {
         'role': 'user',
-        'content': f'Here is the freshness data containing 3day freshness:\n{sm_relative_text}'
+        'content': f'Here is the freshness data containing 3day freshness:\n{sm_relative_md}'
     },
     {
         'role': 'user',
-        'content': f'Here is the Avg Supra Max data:\n{sm_relative_text}'
+        'content': f'Here is the Avg Supra Max data:\n{sm_relative_md}'
     },
     {
         'role': 'user',
-        'content': f'Here is the total Supra Max data:\n{sm_team_text}'
+        'content': f'Here is the total Supra Max data:\n{sm_team_md}'
     },
     {
         'role': 'user',
-        'content': f'Here is the game-only DTL data:\n{go_dtl_text}'
+        'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
     }
 ])
 print(response.message.content)
@@ -80,6 +84,6 @@ EXIT = input('Press ENTER to exit')
 '''
 {
         'role': 'user',
-        'content': f'Here are the freshness scores:\n{freshness_text}'
+        'content': f'Here are the freshness scores:\n{freshness_md}'
     },
 '''

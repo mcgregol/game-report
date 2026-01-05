@@ -2,3 +2,4 @@ ollama
 pandas
 openpyxl
 pyinstaller
+tabulate

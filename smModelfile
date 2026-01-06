@@ -12,12 +12,14 @@ For each player in order of highest to lowest Avg Supra Max, write a short narra
 - Avg SupraMax efforts rank and percentage
 - Total SupraMax efforts rank and percentage
 - Game-only DTL rank and percentage
+- Game-only DTL rank and percentage
+- How that player stacked up for that metric relative to the team (low,mid,high-range)
 
 Use the provided example.
 
 For EXAMPLE:
 
-Josh Dunne led with the highest Supra Max Efforts (Rank 1, 147.86%). His Total Supra Max Efforts were in the mid-range (Rank 7, 5.6%), and his game-only DTL was moderately high (rank 6, 170.62%)
+<PLAYER> led with the highest Supra Max Efforts (Rank <RANK>, <VALUE>). His Total Supra Max Efforts were in the <>-range (Rank <RANK>, <VALUE>), and his game-only DTL was <>(rank <RANK>, <VALUE>)
 
 Remember, do this for every player in order of Avg Supra Max rank, listing each narrative on a new line, with one space line between like so:
 

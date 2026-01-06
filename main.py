@@ -35,7 +35,7 @@ sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 
 #  Print text data for user
-print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')
+#print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')
 
 
 #  Build and send prompt to Ollama for SupraMax metrics

@@ -13,11 +13,12 @@ For each of these 10 players, write a short narrative including:
 - Avg SupraMax efforts rank and percentage
 - Total SupraMax efforts rank and percentage
 - Game-only DTL rank and percentage
+- How that player stacked up for that metric relative to the team (low,mid,high-range)
 
 Below is an example.
 
 For EXAMPLE:
-Noah Ostlund ranked third for Freshness 3day (Rank 3, -46.85). His Total Day DTL was in the mid-range (Rank 13, 188.35), and his Game Only DTL was in the mid-range (Rank 15, 155.00).
+<PLAYER> ranked <RANK> for Freshness 3day (Rank <RANK>, <VALUE>). His Total Day DTL was in the <>-range (Rank <RANK>, <VALUE>), and his Game Only DTL was in the <>-range (Rank <RANK>, <VALUE>).
 
 Remember, do this for every player in order of Avg Supra Max rank, listing each narrative on a new line, with one space line between like so:
 

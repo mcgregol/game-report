@@ -79,7 +79,7 @@ response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
 ])
 print(response.message.content)
 
-EXIT = input('Press ENTER to exit')
+EXIT = input("Press ENTER to exit")
 
 '''
 {

@@ -21,8 +21,8 @@ sm_relative_file = askopenfilename(title="Select SupraMax relative file", filety
 #  Create dataframes
 df1 = pd.read_excel(go_dtl_file)
 df2 = pd.read_excel(freshness_file)
-df3 = pd.read_excel(sm_team_file)
-df4 = pd.read_excel(sm_relative_file)
+df3 = pd.read_excel(sm_team_file, header=1)
+df4 = pd.read_excel(sm_relative_file, header=1)
 
 #  Trim off 7day and sort 3day
 df2 = df2.drop(columns=['Freshness (7 day)'])
@@ -37,7 +37,6 @@ sm_relative_md = df4.to_markdown(index=False)
 #  Print text data for user
 #print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')
 
-
 #  Build and send prompt to Ollama for SupraMax metrics
 response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
     {
@@ -47,7 +46,7 @@ response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
     },
     {
         'role': 'user',
-        'content': f'Here is the total Supra Max data:\n{sm_team_md}'
+        'content': f'Here is the team total Supra Max data:\n{sm_team_md}'
     },
     {
         'role': 'user',
@@ -70,7 +69,7 @@ response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
     },
     {
         'role': 'user',
-        'content': f'Here is the total Supra Max data:\n{sm_team_md}'
+        'content': f'Here is the team total Supra Max data:\n{sm_team_md}'
     },
     {
         'role': 'user',
@@ -80,10 +79,3 @@ response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
 print(response.message.content)
 
 EXIT = input("Press ENTER to exit")
-
-'''
-{
-        'role': 'user',
-        'content': f'Here are the freshness scores:\n{freshness_md}'
-    },
-'''

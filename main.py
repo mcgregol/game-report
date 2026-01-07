@@ -28,17 +28,32 @@ df4 = pd.read_excel(sm_relative_file, header=1)
 df2 = df2.drop(columns=['Freshness (7 day)'])
 df2 = df2.sort_values(by=['Freshness (3 day)'])
 
+#  add and populate rank cols
+print(len(df1))
+df1.insert(0, 'Rank', range(1, len(df1) + 1))
+
+print(len(df2))
+df2.insert(0, 'Rank', range(1, len(df2) + 1))
+
+print(len(df3))
+df3.insert(0, 'Rank', range(1, len(df3) + 1))
+
+print(len(df4))
+df4.insert(0, 'Rank', range(1, len(df4) + 1))
+
+'''
+
+NEED TO FIGURE OUT HOW TO GET PERCENTAAGES in MD
+
+'''
+
 #  Convert xlsx to MD
 go_dtl_md = df1.to_markdown(index=False)
 freshness_md = df2.to_markdown(index=False)
 sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 
-#  Convert decimals back to percentages
-df3['Total Supra Max Efforts'] = df3['Total Supra Max Efforts'].map(lambda x: f"{x:.2%}" if pd.notna(x) else x)
-df4['Avg Supra Max Efforts'] = df4['Avg Supra Max Efforts'].map(lambda x: f"{x:.2%}" if pd.notna(x) else x)
-
-print(f'{df3}\n{df4}')
+print(f'{go_dtl_md}\n{freshness_md}\n{sm_team_md}\n{sm_relative_md}')
 
 #  Print text data for user
 #print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')

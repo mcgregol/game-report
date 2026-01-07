@@ -34,6 +34,12 @@ freshness_md = df2.to_markdown(index=False)
 sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 
+#  Convert decimals back to percentages
+df3['Total Supra Max Efforts'] = df3['Total Supra Max Efforts'].map(lambda x: f"{x:.2%}" if pd.notna(x) else x)
+df4['Avg Supra Max Efforts'] = df4['Avg Supra Max Efforts'].map(lambda x: f"{x:.2%}" if pd.notna(x) else x)
+
+print(f'{df3}\n{df4}')
+
 #  Print text data for user
 #print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')
 

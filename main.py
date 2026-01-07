@@ -42,11 +42,11 @@ response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
     {
         #  for system role tweaks, use modelfile
         'role': 'user',
-        'content': f'Here is the Avg Supra Max data:\n{sm_relative_md}'
+        'content': f'Here is data including the Avg Supra Max Efforts:\n{sm_relative_md}'
     },
     {
         'role': 'user',
-        'content': f'Here is the team total Supra Max data:\n{sm_team_md}'
+        'content': f'Here is data including the team total Supra Max data:\n{sm_team_md}'
     },
     {
         'role': 'user',

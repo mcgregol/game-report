@@ -29,7 +29,6 @@ df2 = df2.drop(columns=['Freshness (7 day)'])
 df2 = df2.sort_values(by=['Freshness (3 day)'])
 
 #  add and populate rank cols
-print(len(df1))
 df1.insert(0, 'Rank', range(1, len(df1) + 1))
 
 print(len(df2))
@@ -41,11 +40,9 @@ df3.insert(0, 'Rank', range(1, len(df3) + 1))
 print(len(df4))
 df4.insert(0, 'Rank', range(1, len(df4) + 1))
 
-'''
-
-NEED TO FIGURE OUT HOW TO GET PERCENTAAGES in MD
-
-'''
+#  append % sign to sm files
+df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'
+df4['Avg Supra Max Efforts'] = (df4['Avg Supra Max Efforts'] * 100).round(3).astype(str) + '%'
 
 #  Convert xlsx to MD
 go_dtl_md = df1.to_markdown(index=False)

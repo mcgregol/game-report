@@ -25,7 +25,7 @@ df3 = pd.read_excel(sm_team_file, header=1)
 df4 = pd.read_excel(sm_relative_file, header=1)
 
 #  Trim off 7day and sort 3day
-df2 = df2.drop(columns=['Freshness (7 day)'])
+df2 = df2.drop(columns=['Freshness (7 day)', 'DTL', 'CTL'])
 df2 = df2.sort_values(by=['Freshness (3 day)'])
 
 #  add and populate rank cols
@@ -79,7 +79,7 @@ print('*************************************************************************
 response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
     {
         'role': 'user',
-        'content': f'Here is the freshness data containing 3day freshness:\n{sm_relative_md}'
+        'content': f'Here is the freshness data:\n{sm_relative_md}'
     },
     {
         'role': 'user',

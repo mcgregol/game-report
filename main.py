@@ -79,7 +79,7 @@ print('*************************************************************************
 response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
     {
         'role': 'user',
-        'content': f'Here is the freshness data:\n{sm_relative_md}'
+        'content': f'Here is the freshness data:\n{freshness_md}'
     },
     {
         'role': 'user',

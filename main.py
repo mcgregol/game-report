@@ -52,9 +52,6 @@ sm_relative_md = df4.to_markdown(index=False)
 
 print(f'{go_dtl_md}\n{freshness_md}\n{sm_team_md}\n{sm_relative_md}')
 
-#  Print text data for user
-#print(f'**************************************************************\n{go_dtl_md}\n\n{freshness_md}\n\n{sm_team_md}\n\n{sm_relative_md}\n**************************************************************')
-
 #  Build and send prompt to Ollama for SupraMax metrics
 response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
     {

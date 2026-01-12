@@ -6,10 +6,9 @@ Use only the data provided by the user.
 Do not use external knowledge.
 Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
-Do not use ranks other than those in the 'Rank' column
+Do not use ranks other than those in the 'Rank' column.
 
-Determine the 10 players with the most Freshness (3 day).
-For each of these 10 players in order of rank, write a short narrative including:
+In order of the given freshness ranks, write a short narrative including:
 - Freshness 3day rank and value
 - Average Supra Max efforts rank and percentage
 - Total Supra Max efforts rank and percentage

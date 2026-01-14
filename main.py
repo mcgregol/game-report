@@ -24,9 +24,12 @@ df2 = pd.read_excel(freshness_file)
 df3 = pd.read_excel(sm_team_file, header=1)
 df4 = pd.read_excel(sm_relative_file, header=1)
 
-#  Trim off 7day and sort 3day
-df2 = df2.drop(columns=['Freshness (7 day)', 'DTL', 'CTL'])
+#  #  Swap placement of tdDTL and 3day && Trim off 7day and sort 3day
+df2 = df2.drop(columns=['Freshness (7 day)', 'CTL'])
 df2 = df2.sort_values(by=['Freshness (3 day)'])
+
+df2.insert(3, 'DTL', df2.pop('DTL'))
+df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
 
 #  add and populate rank cols
 df1.insert(0, 'Rank', range(1, len(df1) + 1))
@@ -76,15 +79,7 @@ print('*************************************************************************
 response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
     {
         'role': 'user',
-        'content': f'Here is the freshness data:\n{freshness_md}'
-    },
-    {
-        'role': 'user',
-        'content': f'Here is the Avg Supra Max data:\n{sm_relative_md}'
-    },
-    {
-        'role': 'user',
-        'content': f'Here is the team total Supra Max data:\n{sm_team_md}'
+        'content': f'Here is the freshness & total day DTL data:\n{freshness_md}'
     },
     {
         'role': 'user',

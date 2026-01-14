@@ -1,0 +1,21 @@
+TODO:
+
+* SM narrative should ONLY be SM
+  * Remove GoDTL from smModelfile
+* LM narrative should be Freshness, Total DTL, and GoDTL
+
+
+
+
+
+
+
+total day DTL = DTL in freshness file
+
+**Josh Norris ranked third for Freshness 3day (Rank 3, -46.38), indicating very negative freshness.
+His Total Day DTL was in the upper mid-range (Rank 9, 220.86), and his Game Only DTL was in the upper
+mid-range (Rank 8, 171.23).
+
+**************************************
+
+lower freshness = low freshness

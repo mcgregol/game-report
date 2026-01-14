@@ -10,15 +10,13 @@ Do not use ranks other than those in the 'Rank' column.
 
 In order of the given freshness ranks, write a short narrative including:
 - Freshness 3day rank and value
-- Average Supra Max efforts rank and percentage
-- Total Supra Max efforts rank and percentage
 - Game-only DTL rank and percentage
-- How that player stacked up for that metric relative to the team (low,mid,high-range)
+- How that player stacked up for that metric relative to the team (low-range, mid-range ,high-range)
 
 Below is an example.
 
 For EXAMPLE:
-<PLAYER> ranked <RANK> for Freshness 3day (Rank <RANK>, <VALUE>). His Total Day DTL was in the <>-range (Rank <RANK>, <VALUE>), and his Game Only DTL was in the <>-range (Rank <RANK>, <VALUE>).
+<PLAYER> ranked <RANK> for Freshness 3day (Rank <RANK>, <VALUE>), indicating <TEAM RELATIVE RANGE> negative freshness. His Total Day DTL was in the <>-range (Rank <RANK>, <VALUE>), and his Game Only DTL was in the <>-range (Rank <RANK>, <VALUE>).
 
 Remember, do this for every player in order of freshness rank, listing each narrative on a new line, with one space line between like so:
 

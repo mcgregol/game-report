@@ -6,22 +6,21 @@ Use only the data provided by the user.
 Do not use external knowledge.
 Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
-Do not create ranks, using only those in the 'Rank' column
+Do not create ranks, using only those in the 'Rank' column.
+If there is a 'Date' column, always ignore it.
 
 
 Rank every player by their respective Avg Supra Max efforts.
 For each player in order of highest to lowest Avg Supra Max, write a short narrative including only:
 - Avg Supra Max Efforts rank and percentage
 - Total Supra Max efforts rank and percentage
-- Game-only DTL rank and percentage
-- Game-only DTL rank and percentage
-- How that player stacked up for that metric relative to the team (low,mid,high-range)
+- How that player stacked up for that metric relative to the team (low-range, mid-range, high-range)
 
 Use the provided example.
 
 For EXAMPLE:
 
-<PLAYER> led with the highest Supra Max Efforts (Rank <RANK>, <VALUE>). His Total Supra Max Efforts were in the <>-range (Rank <RANK>, <VALUE>), and his game-only DTL was <>(rank <RANK>, <VALUE>)
+<PLAYER> led with the highest Supra Max Efforts (Rank <RANK>, <VALUE>). His Total Supra Max Efforts were in the <>-range (Rank <RANK>, <VALUE>).
 
 Remember, do this for every player in order of Avg Supra Max rank, listing each narrative on a new line, with one space line between like so:
 

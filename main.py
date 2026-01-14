@@ -53,7 +53,7 @@ freshness_md = df2.to_markdown(index=False)
 sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 
-print(f'{go_dtl_md}\n{freshness_md}\n{sm_team_md}\n{sm_relative_md}')
+print(f'{sm_team_md}\n{sm_relative_md}\n{go_dtl_md}\n{freshness_md}\n')
 
 #  Build and send prompt to Ollama for SupraMax metrics
 response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[

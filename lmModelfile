@@ -12,7 +12,7 @@ If there is a 'Date' column, always ignore it.
 In order of the given freshness ranks, write a short narrative including:
 - Freshness 3day rank and value
 - Game-only DTL rank and percentage
-- How that player stacked up for that metric relative to the team (low-range, mid-range ,high-range)
+- How that player stacked up for each metric relative to the team (low-range, mid-range ,high-range)
 
 Below is an example.
 

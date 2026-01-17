@@ -34,7 +34,6 @@ Do NOT sort, reorder, or infer ordering from values.
 Use the given order as final, even if values appear out of order.
 
 GLOBAL RANGE ENFORCEMENT (MANDATORY):
-
 1. Compute high-range / mid-range / low-range boundaries ONCE using Freshness 3day ranks:
    - Let N = total number of players
    - Let T1 = floor(N / 3)
@@ -44,15 +43,12 @@ GLOBAL RANGE ENFORCEMENT (MANDATORY):
    - low-range: Rank T2+1 through N
 
 2. Assign each player’s Freshness 3day, Total Day DTL, and Game Only DTL metrics to a range based ONLY on the player’s rank relative to these boundaries.
-
 3. DO NOT use metric values to assign ranges.
-
 4. DO NOT recompute boundaries for each metric separately. The same boundaries MUST be applied to all metrics.
-
 5. DO NOT guess or adjust ranges. Rank is the only factor.
 
 
-Below is an example.
+Below is an example output.
 
 For EXAMPLE:
 <PLAYER> ranked <RANK> for Freshness 3day (Rank <RANK>, <VALUE>), indicating <TEAM RELATIVE RANGE> negative freshness. His Total Day DTL was in the <>-range (Rank <RANK>, <VALUE>), and his Game Only DTL was in the <>-range (Rank <RANK>, <VALUE>).

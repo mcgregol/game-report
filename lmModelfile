@@ -33,23 +33,23 @@ as provided in the input table.
 Do NOT sort, reorder, or infer ordering from values.
 Use the given order as final, even if values appear out of order.
 
-TEAM SIZE AND RANGE BOUNDARIES (MANDATORY):
+GLOBAL RANGE ENFORCEMENT (MANDATORY):
 
-The total number of players is determined from the input.
-Compute range boundaries ONCE using Freshness 3day ranks.
+1. Compute high-range / mid-range / low-range boundaries ONCE using Freshness 3day ranks:
+   - Let N = total number of players
+   - Let T1 = floor(N / 3)
+   - Let T2 = floor(2 * N / 3)
+   - high-range: Rank 1 through T1
+   - mid-range: Rank T1+1 through T2
+   - low-range: Rank T2+1 through N
 
-Let N = total number of players.
-Let T1 = floor(N / 3)
-Let T2 = floor(2 * N / 3)
+2. Assign each player’s Freshness 3day, Total Day DTL, and Game Only DTL metrics to a range based ONLY on the player’s rank relative to these boundaries.
 
-Range mapping (by rank only):
-- high-range: Rank ≤ T1
-- mid-range: T1 < Rank ≤ T2
-- low-range: Rank > T2
+3. DO NOT use metric values to assign ranges.
 
-These same boundaries MUST be reused for ALL metrics.
-Do NOT recompute ranges per metric.
-Do NOT use metric values to assign ranges.
+4. DO NOT recompute boundaries for each metric separately. The same boundaries MUST be applied to all metrics.
+
+5. DO NOT guess or adjust ranges. Rank is the only factor.
 
 
 Below is an example.

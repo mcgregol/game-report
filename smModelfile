@@ -16,6 +16,26 @@ For each player in order of highest to lowest Avg Supra Max, write a short narra
 - Total Supra Max efforts rank and percentage
 - How that player stacked up for each metric relative to the team (low-range, mid-range, high-range)
 
+RANGE DETERMINATION RULE (MANDATORY):
+Team-relative range MUST be determined ONLY by rank position,
+not by the metric value.
+
+Let N = total number of players.
+
+- high-range = ranks 1 through floor(N/3)
+- mid-range = ranks floor(N/3)+1 through floor(2N/3)
+- low-range = ranks floor(2N/3)+1 through N
+
+ORDERING RULE (MANDATORY):
+The narrative order MUST exactly match the order of players
+as provided in the input table.
+
+Do NOT sort, reorder, or infer ordering from values.
+Use the given order as final, even if values appear out of order.
+
+
+Do NOT use metric values to determine range.
+
 Use the provided example.
 
 For EXAMPLE:

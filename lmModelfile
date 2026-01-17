@@ -33,6 +33,24 @@ as provided in the input table.
 Do NOT sort, reorder, or infer ordering from values.
 Use the given order as final, even if values appear out of order.
 
+TEAM SIZE AND RANGE BOUNDARIES (MANDATORY):
+
+The total number of players is determined from the input.
+Compute range boundaries ONCE using Freshness 3day ranks.
+
+Let N = total number of players.
+Let T1 = floor(N / 3)
+Let T2 = floor(2 * N / 3)
+
+Range mapping (by rank only):
+- high-range: Rank ≤ T1
+- mid-range: T1 < Rank ≤ T2
+- low-range: Rank > T2
+
+These same boundaries MUST be reused for ALL metrics.
+Do NOT recompute ranges per metric.
+Do NOT use metric values to assign ranges.
+
 
 Below is an example.
 

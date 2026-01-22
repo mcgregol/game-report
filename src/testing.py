@@ -13,7 +13,7 @@ from reportlab.lib import colors
 
 
 class GameReportTemplate():
-    def __init__(self, output_name):
+    def __init__(self, sm_narrative, lm_narrative, output_name):
         self.output_name = output_name
 
     def _make_table(self, data, col_widths, row_height=18):

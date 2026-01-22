@@ -5,6 +5,8 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import pandas as pd
 
+from src.testing import GameReportTemplate
+
 #  Create custom client
 client = Client(
     host='http://192.168.1.47:11434')
@@ -71,6 +73,8 @@ response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
         'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
     }
 ])
+
+sm_narrative = response.message.content
 print(response.message.content)
 
 print('******************************************************************************************\n------------------------------------------------------------------------------------------\n******************************************************************************************\n')
@@ -86,6 +90,10 @@ response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
         'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
     }
 ])
+
+lm_narrative = response.message.content
 print(response.message.content)
+
+game_report_final = GameReportTemplate(sm_narrative, lm_narrative, 'googly.pdf')
 
 EXIT = input("Press ENTER to exit")

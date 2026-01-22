@@ -1,5 +1,5 @@
 ollama
 pandas
-openpyxl
 pyinstaller
 tabulate
+reportlab

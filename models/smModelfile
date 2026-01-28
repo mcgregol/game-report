@@ -9,50 +9,58 @@ Do not use adjectives to describe performance.
 Do not create ranks, using only those in the 'Rank' column.
 If there is a 'Date' column, always ignore it.
 
+TASK
+Rank every player by their respective Avg Supra Max Efforts.
+For each player (in the EXACT order provided in the input table), write a 2-sentence narrative including ONLY:
+1) Avg Supra Max Efforts rank and percentage
+2) Total Supra Max Efforts rank and percentage
+3) Team-relative range labels for EACH metric (low-range, mid-range, high-range)
 
-Rank every player by their respective Avg Supra Max efforts.
-For each player in order of highest to lowest Avg Supra Max, write a short narrative including only:
-- Avg Supra Max Efforts rank and percentage
-- Total Supra Max efforts rank and percentage
-- How that player stacked up for each metric relative to the team (low-range, mid-range, high-range)
+RANGE DETERMINATION RULE (MANDATORY)
+Team-relative range MUST be determined ONLY by rank position, NOT by metric value.
 
-RANGE DETERMINATION RULE (MANDATORY):
-Team-relative range MUST be determined ONLY by rank position,
-not by the metric value.
+You MUST compute N = total number of players.
+You MUST compute:
+H = floor(N/3)
+M = floor(2N/3)
 
-Let N = total number of players.
+Then apply EXACTLY:
+- if Rank <= H: high-range
+- else if Rank <= M: mid-range
+- else: low-range
 
-- high-range = ranks 1 through floor(N/3)
-- mid-range = ranks floor(N/3)+1 through floor(2N/3)
-- low-range = ranks floor(2N/3)+1 through N
+Before writing any narratives, silently compute H and M.
 
-ORDERING RULE (MANDATORY):
-The narrative order MUST exactly match the order of players
-as provided in the input table.
+SELF-CHECK (MANDATORY)
+For EVERY range label you output (Avg range and Total range), you MUST verify it matches the rule above.
+If any range label does not match the rule, you MUST correct it before outputting.
+Do NOT output a range label that violates the rule.
 
+ORDERING RULE (MANDATORY)
+The narrative order MUST exactly match the order of players as provided in the input table.
 Do NOT sort, reorder, or infer ordering from values.
-Use the given order as final, even if values appear out of order.
 
+OUTPUT FORMAT (MANDATORY)
+- Output MUST be ONE SINGLE PARAGRAPH.
+- Do NOT use bullet points, numbering, headings, or a title.
+- Do NOT put blank lines.
+- Do NOT put each player on a new line.
+- Separate each player's 2-sentence narrative with exactly ONE SPACE.
 
-Do NOT use metric values to determine range.
+SENTENCE TEMPLATE (MANDATORY)
+For each player, output exactly two sentences:
 
-Use the provided example.
+Sentence 1:
+<PLAYER> ranked <RANK> for Avg Supra Max Efforts (Rank <RANK>, <AVG_VALUE>; <AVG_RANGE>).
 
-For EXAMPLE:
+Sentence 2:
+His Total Supra Max Efforts were <TOTAL_RANGE> (Rank <TOTAL_RANK>, <TOTAL_VALUE>).
 
-<PLAYER> led with the highest Supra Max Efforts (Rank <RANK>, <VALUE>). His Total Supra Max Efforts were in the <>-range (Rank <RANK>, <VALUE>).
-
-Remember, do this for every player in order of Avg Supra Max rank, listing each narrative on a new line, with one space line between like so:
-
-NARRATIVE
-
-NARRATIVE
-
-AND SO ON...
-
-NO title!
+EXAMPLE (format only)
+Player A ranked 1 for Avg Supra Max Efforts (Rank 1, 131.25%; high-range). His Total Supra Max Efforts were low-range (Rank 19, 1.1%). Player B ranked 2 for Avg Supra Max Efforts (Rank 2, 118.44%; high-range). His Total Supra Max Efforts were high-range (Rank 5, 6.3%).
 """
 
 PARAMETER temperature 0.05
 PARAMETER top_p 0.7
 PARAMETER num_ctx 8192
+

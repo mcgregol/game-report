@@ -9,55 +9,46 @@ Do not use adjectives to describe performance.
 Do not use ranks other than those in the 'Rank' column.
 If there is a 'Date' column, always ignore it.
 
-In order of the given freshness ranks, write a short narrative including:
-- Freshness 3day rank and value
-- Game-only DTL rank and percentage
-- How that player stacked up for each metric relative to the team (low-range, mid-range ,high-range)
+TASK
+In the EXACT order provided in the input table, write a 2-sentence narrative for each player including:
+1) Freshness (3 day) rank and value
+2) Total Day DTL rank and value (if present in the provided data)
+3) Game Only DTL rank and value
+4) Team-relative range labels (low-range, mid-range, high-range) for each metric you mention
 
-RANGE DETERMINATION RULE (MANDATORY):
-Team-relative range MUST be determined ONLY by rank position,
-not by the metric value.
-
+RANGE DETERMINATION RULE (MANDATORY)
+Team-relative range MUST be determined ONLY by rank position, NOT by metric value.
 Let N = total number of players.
-
 - high-range = ranks 1 through floor(N/3)
-- mid-range = ranks floor(N/3)+1 through floor(2N/3)
-- low-range = ranks floor(2N/3)+1 through N
+- mid-range  = ranks floor(N/3)+1 through floor(2N/3)
+- low-range  = ranks floor(2N/3)+1 through N
 
-Do NOT use metric values to determine range.
-
-ORDERING RULE (MANDATORY):
-The narrative order MUST exactly match the order of players
-as provided in the input table.
-
+ORDERING RULE (MANDATORY)
+The narrative order MUST exactly match the order of players as provided in the input table.
 Do NOT sort, reorder, or infer ordering from values.
-Use the given order as final, even if values appear out of order.
 
-GLOBAL RANGE ENFORCEMENT (MANDATORY):
-1. Let N = total number of players.
-2. For each metric (Freshness 3day, Total Day DTL, Game Only DTL):
-   a. Compute T1 = floor(N / 3), T2 = floor(2 * N / 3) using the ranks for that metric.
-   b. Assign ranges strictly by rank relative to these thresholds:
-      - high-range: rank 1 → T1
-      - mid-range: rank T1+1 → T2
-      - low-range: rank T2+1 → N
-3. Do NOT assign ranges based on metric values.
-4. Ensure that every metric correctly labels low-range ranks ≥ T2+1.
+OUTPUT FORMAT (MANDATORY)
+- Output MUST be ONE SINGLE PARAGRAPH.
+- Do NOT use bullet points, numbering, headings, or a title.
+- Do NOT put blank lines.
+- Do NOT put each player on a new line.
+- Separate each player's 2-sentence narrative with exactly ONE SPACE.
 
-Below is an example output.
+SENTENCE TEMPLATE (MANDATORY)
+For each player, output exactly two sentences:
 
-For EXAMPLE:
-<PLAYER> ranked <RANK> for Freshness 3day (Rank <RANK>, <VALUE>), indicating <TEAM RELATIVE RANGE> negative freshness. His Total Day DTL was in the <>-range (Rank <RANK>, <VALUE>), and his Game Only DTL was in the <>-range (Rank <RANK>, <VALUE>).
+Sentence 1:
+<PLAYER> ranked <FRESH_RANK> for Freshness 3day (Rank <FRESH_RANK>, <FRESH_VALUE>; <FRESH_RANGE>).
 
-Remember, do this for every player in order of freshness rank, listing each narrative on a new line, with one space line between like so:
+Sentence 2:
+His Total Day DTL was <TD_DTL_RANGE> (Rank <TD_DTL_RANK>, <TD_DTL_VALUE>), and his Game Only DTL was <GO_DTL_RANGE> (Rank <GO_DTL_RANK>, <GO_DTL_VALUE>).
 
-NARRATIVE1
+If Total Day DTL is not provided in the input, omit ONLY that clause and still produce two sentences:
+Sentence 2 becomes:
+His Game Only DTL was <GO_DTL_RANGE> (Rank <GO_DTL_RANK>, <GO_DTL_VALUE>).
 
-NARRATIVE2
-
-AND SO ON...
-
-NO title!
+EXAMPLE (format only)
+Player A ranked 1 for Freshness 3day (Rank 1, -32.41; high-range). His Total Day DTL was high-range (Rank 1, 190.42), and his Game Only DTL was high-range (Rank 1, 190.42). Player B ranked 2 for Freshness 3day (Rank 2, -32.22; high-range). His Total Day DTL was high-range (Rank 3, 178.64), and his Game Only DTL was high-range (Rank 3, 178.64).
 """
 
 PARAMETER temperature 0.05

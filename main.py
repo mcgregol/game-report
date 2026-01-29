@@ -4,8 +4,25 @@ from ollama import Client
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import pandas as pd
+import math
 
 from src.testing import GameReportTemplate
+
+#  define function for creating data ranges
+def add_range_from_rank(df, rank_col='Rank', out_col='Range'):
+    n = len(df)
+    h = math.floor(n / 3)
+    m = math.floor(2 * n / 3)
+
+    def label(r):
+        if r <= h:
+            return "high-range"
+        elif r <= m:
+            return "mid-range"
+        return "low-range"
+
+    df[out_col] = df[rank_col].apply(label)
+    return df
 
 #  Create custom client
 client = Client(
@@ -33,7 +50,7 @@ df2 = df2.sort_values(by=['Freshness (3 day)'])
 df2.insert(3, 'DTL', df2.pop('DTL'))
 df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
 
-#  add and populate rank cols
+#  add and populate rank cols & relative ranges
 df1.insert(0, 'Rank', range(1, len(df1) + 1))
 
 print(len(df2))
@@ -41,9 +58,11 @@ df2.insert(0, 'Rank', range(1, len(df2) + 1))
 
 print(len(df3))
 df3.insert(0, 'Rank', range(1, len(df3) + 1))
+df3 = add_range_from_rank(df3, rank_col='Rank', out_col='Range')
 
 print(len(df4))
 df4.insert(0, 'Rank', range(1, len(df4) + 1))
+df4 = add_range_from_rank(df4, rank_col='Rank', out_col='Range')
 
 #  append % sign to sm files
 df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'

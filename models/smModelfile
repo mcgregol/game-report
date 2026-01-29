@@ -9,30 +9,35 @@ Do not invent columns or ranks.
 If there is a Date column, ignore it.
 
 INPUTS
-You will receive TWO relevant tables for this narrative:
+You will receive TWO tables:
 A) Avg Supra Max Efforts table (MASTER ORDER): columns include PLAYER_NAME, Rank, Avg Supra Max Efforts, Range
 B) Total Supra Max Efforts table: columns include PLAYER_NAME, Rank, Total Supra Max Efforts, Range
 
-IMPORTANT (MANDATORY)
-- Use table A (Avg Supra Max Efforts) as the MASTER LIST and MASTER ORDER.
-- Output players in EXACTLY the same order as table A, one paragraph per player.
-- Join data from table B ONLY by exact PLAYER_NAME match.
-- Range is PRECOMPUTED in each table. Use the Range text exactly as provided.
-- Do NOT compute, infer, or adjust any range label.
+CRITICAL COPY RULE (MANDATORY)
+- Every time you output "Rank X" it MUST be copied EXACTLY from the Rank cell in the table for that metric.
+- Never count, increment, or assume ranks based on position in the list.
+- If the Rank cell for a player/metric is missing, omit that player entirely.
+
+ORDER RULE (MANDATORY)
+- Use table A order exactly as written. Do not reorder.
+
+RANGE RULE (MANDATORY)
+- Range is PRECOMPUTED in each table. Use the Range text exactly as provided for that metric.
+- Do NOT compute, infer, or adjust range labels.
 
 TASK
-For each player (in table A order), write EXACTLY TWO sentences:
+For each player in table A order, write EXACTLY TWO sentences:
 
-Sentence 1 (from table A only):
+Sentence 1 (from table A):
 <PLAYER_NAME> ranked <A_RANK> for Avg Supra Max Efforts (Rank <A_RANK>, <A_AVG_VALUE>; <A_RANGE>).
 
-Sentence 2 (from table B only):
+Sentence 2 (from table B):
 <PLAYER_NAME>'s Total Supra Max Efforts were <B_RANGE> (Rank <B_RANK>, <B_TOTAL_VALUE>).
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.
 - Separate paragraphs with exactly ONE blank line.
-- No title, no headings, no bullet points, no numbering.
+- No title, headings, bullets, or numbering.
 """
 PARAMETER temperature 0.05
 PARAMETER top_p 0.7

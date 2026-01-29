@@ -11,33 +11,28 @@ If there is a Date column, ignore it.
 INPUTS
 You will receive TWO tables:
 A) Freshness table (MASTER ORDER): columns include PLAYER_NAME, Rank, Freshness (3 day), Total Day DTL
-B) Game Only DTL table: columns include PLAYER_NAME and Avg DTL, and MAY include Rank
+B) Game Only DTL table: columns include PLAYER_NAME, Avg DTL, and Rank
 
-IMPORTANT (MANDATORY)
-- Use table A as the MASTER LIST and MASTER ORDER.
+CRITICAL COPY RULE (MANDATORY)
+- Any "Rank X" must be copied exactly from the Rank cell in the relevant table.
+- Never compute or infer ranks.
+
+ORDER RULE (MANDATORY)
 - Output players in EXACTLY the same order as table A.
-- Join table B ONLY by exact PLAYER_NAME match.
-- Do NOT compute any ranks.
-- Total Day DTL rank MUST be the Rank value from table A (the Freshness table).
-- Game Only DTL rank MUST be the Rank value from table B IF AND ONLY IF table B contains a Rank column.
-  If table B has no Rank column, do NOT mention a Game Only DTL rank.
 
 TASK
-For each player (in table A order), write EXACTLY TWO sentences:
+For each player (table A order), write EXACTLY TWO sentences:
 
-Sentence 1 (from table A):
+Sentence 1:
 <PLAYER_NAME> ranked <FRESH_RANK> for Freshness 3day (Rank <FRESH_RANK>, <FRESH_VALUE>).
 
 Sentence 2:
-If table B contains Rank:
-<PLAYER_NAME>'s Total Day DTL ranked <TD_RANK> (<TD_VALUE>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
-If table B does NOT contain Rank:
-<PLAYER_NAME>'s Total Day DTL ranked <TD_RANK> (<TD_VALUE>), and Game Only DTL was <GO_VALUE>.
+<PLAYER_NAME>'s Total Day DTL ranked <FRESH_RANK> (<TD_VALUE>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.
 - Separate paragraphs with exactly ONE blank line.
-- No title, no headings, no bullet points.
+- No title, headings, bullets, or numbering.
 """
 PARAMETER temperature 0.05
 PARAMETER top_p 0.7

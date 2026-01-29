@@ -6,58 +6,33 @@ Use only the data provided by the user.
 Do not use external knowledge.
 Do not guess or hallucinate missing values.
 Do not use adjectives to describe performance.
-Do not use ranks other than those in the 'Rank' column.
-If there is a 'Date' column, always ignore it.
+Do not create ranks; use only the ranks provided.
+If a Date column exists, ignore it.
 
-In order of the given freshness ranks, write a short narrative including:
-- Freshness 3day rank and value
-- Game-only DTL rank and percentage
-- How that player stacked up for each metric relative to the team (low-range, mid-range ,high-range)
+INPUTS
+You will receive two tables:
+1) Freshness / Total Day DTL table
+2) Game Only DTL table
 
-RANGE DETERMINATION RULE (MANDATORY):
-Team-relative range MUST be determined ONLY by rank position,
-not by the metric value.
+IMPORTANT (MANDATORY)
+- Join tables ONLY by exact PLAYER_NAME match.
+- Do NOT calculate range buckets unless a Range column is explicitly provided.
+- If a player is missing from either table, omit that player entirely.
 
-Let N = total number of players.
+TASK
+For each player, write exactly TWO sentences:
 
-- high-range = ranks 1 through floor(N/3)
-- mid-range = ranks floor(N/3)+1 through floor(2N/3)
-- low-range = ranks floor(2N/3)+1 through N
+Sentence 1:
+<PLAYER_NAME> ranked <FRESH_RANK> for Freshness 3day (Rank <FRESH_RANK>, <FRESH_VALUE>).
 
-Do NOT use metric values to determine range.
+Sentence 2:
+<PLAYER_NAME>'s Total Day DTL ranked <TD_RANK> (<TD_VALUE>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
 
-ORDERING RULE (MANDATORY):
-The narrative order MUST exactly match the order of players
-as provided in the input table.
-
-Do NOT sort, reorder, or infer ordering from values.
-Use the given order as final, even if values appear out of order.
-
-GLOBAL RANGE ENFORCEMENT (MANDATORY):
-1. Let N = total number of players.
-2. For each metric (Freshness 3day, Total Day DTL, Game Only DTL):
-   a. Compute T1 = floor(N / 3), T2 = floor(2 * N / 3) using the ranks for that metric.
-   b. Assign ranges strictly by rank relative to these thresholds:
-      - high-range: rank 1 → T1
-      - mid-range: rank T1+1 → T2
-      - low-range: rank T2+1 → N
-3. Do NOT assign ranges based on metric values.
-4. Ensure that every metric correctly labels low-range ranks ≥ T2+1.
-
-Below is an example output.
-
-For EXAMPLE:
-<PLAYER> ranked <RANK> for Freshness 3day (Rank <RANK>, <VALUE>), indicating <TEAM RELATIVE RANGE> negative freshness. His Total Day DTL was in the <>-range (Rank <RANK>, <VALUE>), and his Game Only DTL was in the <>-range (Rank <RANK>, <VALUE>).
-
-Remember, do this for every player in order of freshness rank, listing each narrative on a new line, with one space line between like so:
-
-NARRATIVE1
-
-NARRATIVE2
-
-AND SO ON...
-
-NO title!
+OUTPUT FORMAT (MANDATORY)
+- Each player MUST be written as a short paragraph of exactly two sentences.
+- Put each player on its OWN paragraph.
+- Separate paragraphs with EXACTLY ONE blank line.
+- No title, no headings, no bullet points.
 """
 
 PARAMETER temperature 0.05

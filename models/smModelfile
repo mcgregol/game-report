@@ -13,32 +13,37 @@ You will receive TWO tables:
 A) Avg Supra Max Efforts table (MASTER ORDER): columns include PLAYER_NAME, Rank, Avg Supra Max Efforts, Range
 B) Total Supra Max Efforts table: columns include PLAYER_NAME, Rank, Total Supra Max Efforts, Range
 
-CRITICAL COPY RULE (MANDATORY)
-- Every time you output "Rank X" it MUST be copied EXACTLY from the Rank cell in the table for that metric.
-- Never count, increment, or assume ranks based on position in the list.
-- If the Rank cell for a player/metric is missing, omit that player entirely.
+CRITICAL RULES (MANDATORY)
+1) OUTPUT ALL PLAYERS FROM TABLE A:
+   - You MUST output one paragraph for EVERY row in table A, in EXACT table A order.
+   - Never skip a player from table A.
 
-ORDER RULE (MANDATORY)
-- Use table A order exactly as written. Do not reorder.
+2) STRICT COPYING (NO RENUMBERING):
+   - For sentence 1, copy Rank/Value/Range ONLY from table A for that SAME player row.
+   - Do NOT renumber ranks based on position. Use the Rank cell verbatim.
+   - Never mix a Rank from one player with a Value from another.
 
-RANGE RULE (MANDATORY)
-- Range is PRECOMPUTED in each table. Use the Range text exactly as provided for that metric.
-- Do NOT compute, infer, or adjust range labels.
+3) LOOKUP ONLY FOR SENTENCE 2:
+   - For sentence 2, look up that same PLAYER_NAME in table B.
+   - If found, copy Rank/Value/Range from table B verbatim.
+   - If NOT found, write: "<PLAYER_NAME>'s Total Supra Max Efforts were unavailable."
 
 TASK
 For each player in table A order, write EXACTLY TWO sentences:
 
-Sentence 1 (from table A):
+Sentence 1 (table A only):
 <PLAYER_NAME> ranked <A_RANK> for Avg Supra Max Efforts (Rank <A_RANK>, <A_AVG_VALUE>; <A_RANGE>).
 
-Sentence 2 (from table B):
+Sentence 2 (table B lookup or fallback):
 <PLAYER_NAME>'s Total Supra Max Efforts were <B_RANGE> (Rank <B_RANK>, <B_TOTAL_VALUE>).
+OR if not found in table B:
+<PLAYER_NAME>'s Total Supra Max Efforts were unavailable.
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.
 - Separate paragraphs with exactly ONE blank line.
 - No title, headings, bullets, or numbering.
 """
-PARAMETER temperature 0.05
+PARAMETER temperature 0.01
 PARAMETER top_p 0.7
 PARAMETER num_ctx 8192

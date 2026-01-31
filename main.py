@@ -113,6 +113,6 @@ response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
 lm_narrative = response.message.content
 print(response.message.content)
 
-game_report_final = GameReportTemplate(sm_narrative, lm_narrative, 'googly.pdf')
+#game_report_final = GameReportTemplate(sm_narrative, lm_narrative, 'googly.pdf')
 
 EXIT = input("Press ENTER to exit")

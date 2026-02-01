@@ -18,7 +18,7 @@ CRITICAL RULES (MANDATORY)
    - You MUST output one paragraph for EVERY row in table A, in EXACT table A order.
    - Never skip a player from table A.
 
-2) STRICT COPYING (NO RENUMBING):
+2) STRICT COPYING (NO RENUMBERING):
    - For sentence 1, copy Rank/Value/Range ONLY from table A for that SAME player row.
    - Do NOT renumber ranks based on position. Use the Rank cell verbatim.
    - Never mix a Rank from one player with a Value from another.

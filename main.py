@@ -50,6 +50,9 @@ df2 = df2.sort_values(by=['Freshness (3 day)'])
 df2.insert(3, 'DTL', df2.pop('DTL'))
 df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
 
+#  rename DTL to td DTL & add respective rankings
+df2["Total Day DTL Rank"] = (df2["Total Day DTL"].rank(ascending=False, method="min").astype(int))
+
 #  add and populate rank cols & relative ranges
 df1.insert(0, 'Rank', range(1, len(df1) + 1))
 

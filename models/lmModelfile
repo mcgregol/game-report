@@ -10,12 +10,15 @@ If there is a Date column, ignore it.
 
 INPUTS
 You will receive TWO tables:
-A) Freshness table (MASTER ORDER): columns include PLAYER_NAME, Rank, Freshness (3 day), Total Day DTL
+A) Freshness table (MASTER ORDER): columns include PLAYER_NAME, Rank, Freshness (3 day), Total Day DTL, Total Day DTL Rank
+- NOTE: In table A, "Rank" = Freshness rank (master order), not Total Day DTL rank.
 B) Game Only DTL table: columns include PLAYER_NAME, Avg DTL, and Rank
 
 CRITICAL COPY RULE (MANDATORY)
-- Any "Rank X" must be copied exactly from the Rank cell in the relevant table.
-- Never compute or infer ranks.
+- Freshness rank: use table A column "Rank".
+- Total Day DTL rank: use table A column "Total Day DTL Rank".
+- Game Only DTL rank: use table B column "Rank".
+- Never compute, infer, or re-rank anything.
 
 ORDER RULE (MANDATORY)
 - Output players in EXACTLY the same order as table A.
@@ -24,10 +27,10 @@ TASK
 For each player (table A order), write EXACTLY TWO sentences:
 
 Sentence 1:
-<PLAYER_NAME> ranked <FRESH_RANK> for Freshness 3day (Rank <FRESH_RANK>, <FRESH_VALUE>).
+<PLAYER_NAME> ranked <FRESH_RANK> for Freshness 3day (<FRESH_VALUE>).
 
 Sentence 2:
-<PLAYER_NAME>'s Total Day DTL ranked <FRESH_RANK> (<TD_VALUE>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
+<PLAYER_NAME>'s Total Day DTL was <TD_VALUE> (Rank <TD_RANK>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.

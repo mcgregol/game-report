@@ -6,7 +6,7 @@ from tkinter.filedialog import askopenfilename
 import pandas as pd
 import math
 
-from src.testing import GameReportTemplate
+# from src.testing import GameReportTemplate
 
 #  define function for creating data ranges
 def add_range_from_rank(df, rank_col='Rank', out_col='Range'):

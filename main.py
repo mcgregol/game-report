@@ -51,7 +51,15 @@ df2.insert(3, 'DTL', df2.pop('DTL'))
 df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
 
 #  rename DTL to td DTL & add respective rankings
-df2["Total Day DTL Rank"] = (df2["Total Day DTL"].rank(ascending=False, method="min").astype(int))
+df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
+
+df2["Total Day DTL"] = pd.to_numeric(df2["Total Day DTL"], errors="coerce")
+
+df2["Total Day DTL Rank"] = (
+    df2["Total Day DTL"]
+        .rank(ascending=False, method="min")
+        .astype("Int64")
+)
 
 #  add and populate rank cols & relative ranges
 df1.insert(0, 'Rank', range(1, len(df1) + 1))

@@ -30,7 +30,7 @@ Sentence 1:
 <PLAYER_NAME> ranked <FRESH_RANK> for Freshness 3day (<FRESH_VALUE>).
 
 Sentence 2:
-<PLAYER_NAME>'s Total Day DTL was <TD_VALUE> (Rank <TD_RANK>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
+His Total Day DTL was <TD_VALUE> (Rank <TD_RANK>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.

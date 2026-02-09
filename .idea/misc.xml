@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="gamereport" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="gamereport" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="$USER_HOME$/miniconda3/envs/gamereport" project-jdk-type="Python SDK" />
 </project>

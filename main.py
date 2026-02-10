@@ -1,11 +1,8 @@
-from ollama import chat
 from ollama import ChatResponse
 from ollama import Client
 
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-
-from src.gr_template import GameReportTemplate
 
 import pandas as pd
 import math

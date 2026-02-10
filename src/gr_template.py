@@ -1,3 +1,12 @@
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.rl_config import defaultPageSize
+from reportlab.lib.units import inch
+
+#  set page size and style to defaults
+PAGE_HEIGHT = defaultPageSize[1]; PAGE_WIDTH = defaultPageSize[0]
+styles = getSampleStyleSheet()
+
 class GameReportTemplate:
     def __init__(self, sm_narrative, lm_narrative, df_go_dtl, df_freshness, df_team_sm, df_relative_sm):
         self.sm_narrative = sm_narrative
@@ -6,3 +15,31 @@ class GameReportTemplate:
         self.df_freshness = df_freshness
         self.df_team_sm = df_team_sm
         self.df_relative_sm = df_relative_sm
+
+    def intensity_band_metrics(self, canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Bold', 16)
+        canvas.drawCentredString(PAGE_WIDTH/2, PAGE_HEIGHT-108, 'Intensity Band Metrics')
+        canvas.setFont('Times-Roman', 9)
+        canvas.drawString(inch, 0.75 * inch, "First Page / %s" % 'example thingy')
+        canvas.restoreState()
+
+    def load_metrics(self, canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 9)
+        canvas.restoreState()
+
+    def go(self):
+        doc = SimpleDocTemplate("testing.pdf")
+        Story = [Spacer(1,2*inch)]
+        style = styles['Normal']
+        for i in range(100):
+            bogustext = ("This is Paragraph number %s. " % i) * 20
+            p = Paragraph(bogustext, style)
+            Story.append(p)
+            Story.append(Spacer(1, 0.2 * inch))
+        doc.build(Story, onFirstPage=self.intensity_band_metrics, onLaterPages=self.load_metrics)
+
+if __name__ == "__main__":
+    t = GameReportTemplate('','','','','','')
+    t.go()

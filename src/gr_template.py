@@ -1,7 +1,11 @@
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
+
+#  sets game date & other team's name
+opp = 'Detroit Red Wings'
+gd = '1/7/05'
 
 #  set page size and style to defaults
 PAGE_HEIGHT = defaultPageSize[1]; PAGE_WIDTH = defaultPageSize[0]
@@ -18,10 +22,25 @@ class GameReportTemplate:
 
     def intensity_band_metrics(self, canvas, doc):
         canvas.saveState()
-        canvas.setFont('Times-Bold', 16)
-        canvas.drawCentredString(PAGE_WIDTH/2, PAGE_HEIGHT-108, 'Intensity Band Metrics')
-        canvas.setFont('Times-Roman', 9)
-        canvas.drawString(inch, 0.75 * inch, "First Page / %s" % 'example thingy')
+
+        canvas.setFont('Times-Bold', 24)
+        canvas.drawCentredString(PAGE_WIDTH/2, PAGE_HEIGHT-120, f'Buffalo Sabres vs {opp}')
+
+        canvas.drawImage('../assets/achieve.png',
+                         doc.leftMargin-inch/2, inch*9.75,
+                         width=inch*1.75,
+                         mask='auto',
+                         preserveAspectRatio=True
+                         )
+        canvas.drawImage('../assets/sabres.png',
+                         inch*2.35, inch*2.075,
+                         width=inch*0.5,
+                         mask='auto',
+                         preserveAspectRatio=True)
+
+        canvas.setFont('Times-Roman', 12)
+        canvas.drawCentredString(inch*6.5, inch*10.905, f'Game Report - {gd}')
+
         canvas.restoreState()
 
     def load_metrics(self, canvas, doc):

@@ -1,12 +1,14 @@
 from ollama import chat
 from ollama import ChatResponse
 from ollama import Client
+
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+
+from src.gr_template import GameReportTemplate
+
 import pandas as pd
 import math
-
-# from src.testing import GameReportTemplate
 
 #  define function for creating data ranges
 def add_range_from_rank(df, rank_col='Rank', out_col='Range'):

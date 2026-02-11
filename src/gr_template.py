@@ -1,7 +1,9 @@
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
+from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle)
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
+from reportlab.lib import colors
+import pandas as pd
 
 #  sets game date & other team's name
 opp = 'Detroit Red Wings'
@@ -77,10 +79,61 @@ class GameReportTemplate:
 
         canvas.restoreState()
 
+    #  create function to convert df to list
+    def df_to_table_data(self, df: pd.DataFrame):
+        #  replace NaN
+        df = df.fillna("")
+
+        header = list(df.columns)
+        rows = df.astype(str).values.tolist()
+
+        return [header] + rows
+
     def go(self):
         doc = SimpleDocTemplate(f'{self.report_name}.pdf')
-        Story = [Spacer(1,2*inch)]
-        style = styles['Normal']
+        Story = []
+
+        #  supramax team table
+        sm_team_data = self.df_to_table_data(self.df_team_sm.drop(columns=['Total Very High Intensity Efforts'], errors='ignore'))
+        sm_team_tbl = Table(sm_team_data, hAlign='LEFT', repeatRows=1)
+        sm_team_tbl.setStyle(TableStyle([
+            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+            ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+        ]))
+
+        #  supramax relative table
+        sm_relative_data = self.df_to_table_data(self.df_relative_sm)
+        sm_relative_tbl = Table(sm_relative_data, hAlign='RIGHT', repeatRows=1)
+        sm_relative_tbl.setStyle(TableStyle([
+            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+            ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+        ]))
+
+        #  add to story
+        # ---- width available for content
+        available_width = doc.width
+        half = available_width / 2
+
+        # resize both tables so they fit their half
+        sm_team_tbl._argW = [half / len(sm_team_data[0])] * len(sm_team_data[0])
+        sm_relative_tbl._argW = [half / len(sm_relative_data[0])] * len(sm_relative_data[0])
+
+        # ---- container table (2 columns, 1 row)
+        pair_tbl = Table(
+            [[sm_team_tbl, sm_relative_tbl]],
+            colWidths=[half, half]
+        )
+
+        pair_tbl.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ]))
+
+        Story.append(Spacer(1, inch * 2.2))
+        Story.append(pair_tbl)
 
         doc.build(Story, onFirstPage=self.intensity_band_metrics, onLaterPages=self.load_metrics)
 

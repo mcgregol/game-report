@@ -24,48 +24,22 @@ def add_range_from_rank(df, rank_col='Rank', out_col='Range'):
 Tk().withdraw()
 
 #  Fetch data files
+'''
 go_dtl_file = askopenfilename(title="Select game-only DTL Excel file", filetypes=[("Excel files","*.xlsx")])
 freshness_file = askopenfilename(title="Select Freshness Excel file", filetypes=[("Excel files","*.xlsx")])
 sm_team_file = askopenfilename(title="Select SupraMax team file", filetypes=[("Excel files","*.xlsx")])
 sm_relative_file = askopenfilename(title="Select SupraMax relative file", filetypes=[("Excel files","*.xlsx")])
+'''
+go_dtl_file = '../data/1-31-26/Game_Only_DTL-1-26-31v2.xlsx'
+freshness_file = '../data/1-31-26/Indidivudal_Freshness_Summary-_Game_Report-1-31-26v2.xlsx'
+sm_team_file = '../data/1-31-26/Intensity_Band_player_Game-1-31-26v2.xlsx'
+sm_relative_file = '../data/1-31-26/Intensity_Band_player_Relative_-_Game1-31-26v2.xlsx'
 
 #  Create dataframes
 df1 = pd.read_excel(go_dtl_file)
 df2 = pd.read_excel(freshness_file)
 df3 = pd.read_excel(sm_team_file, header=1)
 df4 = pd.read_excel(sm_relative_file, header=1)
-
-#  #  Swap placement of tdDTL and 3day && Trim off 7day and sort 3day
-df2 = df2.drop(columns=['Freshness (7 day)', 'CTL'])
-df2 = df2.sort_values(by=['Freshness (3 day)'])
-
-df2.insert(3, 'DTL', df2.pop('DTL'))
-df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
-
-#  rename DTL to td DTL & add respective rankings
-df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
-
-df2["Total Day DTL"] = pd.to_numeric(df2["Total Day DTL"], errors="coerce")
-
-df2["Total Day DTL Rank"] = (
-    df2["Total Day DTL"]
-        .rank(ascending=False, method="min")
-        .astype("Int64")
-)
-
-#  add and populate rank cols & relative ranges
-df1.insert(0, 'Rank', range(1, len(df1) + 1))
-
-print(len(df2))
-df2.insert(0, 'Rank', range(1, len(df2) + 1))
-
-print(len(df3))
-df3.insert(0, 'Rank', range(1, len(df3) + 1))
-df3 = add_range_from_rank(df3, rank_col='Rank', out_col='Range')
-
-print(len(df4))
-df4.insert(0, 'Rank', range(1, len(df4) + 1))
-df4 = add_range_from_rank(df4, rank_col='Rank', out_col='Range')
 
 #  append % sign to sm files
 df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'

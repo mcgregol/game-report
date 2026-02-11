@@ -52,7 +52,21 @@ class GameReportTemplate:
                     line_y
                     )
         line_x = (doc.leftMargin+(doc.pagesize[0]-doc.rightMargin))/2
-        canvas.line(line_x, inch*9, line_x, inch*4.5)
+        canvas.line(line_x, inch*9, line_x, inch*4)
+
+        #  add table labels
+        canvas.drawString(inch*1.05,
+                          line_y-inch/4,
+                          "Player SupraMax Efforts as")
+        canvas.drawString(inch*1.05,
+                          line_y-inch/2.25,
+                          "Percentage of Team Total")
+        canvas.drawString(inch*4.25,
+                          line_y-inch/4,
+                          "Player SupraMax/VHI Efforts")
+        canvas.drawString(inch*4.25,
+                          line_y-inch/2.25,
+                          "Relative to Personal Player Average")
 
         canvas.restoreState()
 

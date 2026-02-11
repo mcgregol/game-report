@@ -1,4 +1,4 @@
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
@@ -20,12 +20,17 @@ class GameReportTemplate:
         self.df_team_sm = df_team_sm
         self.df_relative_sm = df_relative_sm
 
+    #  intensity band static template
     def intensity_band_metrics(self, canvas, doc):
         canvas.saveState()
 
+        #  add title
         canvas.setFont('Times-Bold', 24)
         canvas.drawCentredString(PAGE_WIDTH/2, PAGE_HEIGHT-120, f'Buffalo Sabres vs {opp}')
 
+        #  add headers
+        canvas.setFont('Times-Roman', 14)
+        canvas.drawCentredString(inch * 6.5, inch * 10.905, f'Game Report - {gd}')
         canvas.drawImage('../assets/achieve.png',
                          doc.leftMargin-inch/2, inch*9.75,
                          width=inch*1.75,
@@ -38,11 +43,20 @@ class GameReportTemplate:
                          mask='auto',
                          preserveAspectRatio=True)
 
-        canvas.setFont('Times-Roman', 12)
-        canvas.drawCentredString(inch*6.5, inch*10.905, f'Game Report - {gd}')
+        #  add separation lines
+        line_y = inch*9
+        canvas.setLineWidth(2)
+        canvas.line(doc.leftMargin,
+                    line_y,
+                    doc.pagesize[0]-doc.rightMargin,
+                    line_y
+                    )
+        line_x = (doc.leftMargin+(doc.pagesize[0]-doc.rightMargin))/2
+        canvas.line(line_x, inch*9, line_x, inch*4.5)
 
         canvas.restoreState()
 
+    #  load metrics static template
     def load_metrics(self, canvas, doc):
         canvas.saveState()
         canvas.setFont('Times-Roman', 9)
@@ -52,11 +66,7 @@ class GameReportTemplate:
         doc = SimpleDocTemplate("testing.pdf")
         Story = [Spacer(1,2*inch)]
         style = styles['Normal']
-        for i in range(100):
-            bogustext = ("This is Paragraph number %s. " % i) * 20
-            p = Paragraph(bogustext, style)
-            Story.append(p)
-            Story.append(Spacer(1, 0.2 * inch))
+
         doc.build(Story, onFirstPage=self.intensity_band_metrics, onLaterPages=self.load_metrics)
 
 if __name__ == "__main__":

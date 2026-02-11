@@ -12,7 +12,8 @@ PAGE_HEIGHT = defaultPageSize[1]; PAGE_WIDTH = defaultPageSize[0]
 styles = getSampleStyleSheet()
 
 class GameReportTemplate:
-    def __init__(self, sm_narrative, lm_narrative, df_go_dtl, df_freshness, df_team_sm, df_relative_sm):
+    def __init__(self, report_name, sm_narrative, lm_narrative, df_go_dtl, df_freshness, df_team_sm, df_relative_sm):
+        self.report_name = report_name
         self.sm_narrative = sm_narrative
         self.lm_narrative = lm_narrative
         self.df_go_dtl = df_go_dtl
@@ -52,7 +53,7 @@ class GameReportTemplate:
                     line_y
                     )
         line_x = (doc.leftMargin+(doc.pagesize[0]-doc.rightMargin))/2
-        canvas.line(line_x, inch*9, line_x, inch*4)
+        canvas.line(line_x, inch*9, line_x, inch*3)
 
         #  add table labels
         canvas.drawString(inch*1.05,
@@ -73,16 +74,16 @@ class GameReportTemplate:
     #  load metrics static template
     def load_metrics(self, canvas, doc):
         canvas.saveState()
-        canvas.setFont('Times-Roman', 9)
+
         canvas.restoreState()
 
     def go(self):
-        doc = SimpleDocTemplate("testing.pdf")
+        doc = SimpleDocTemplate(f'{self.report_name}.pdf')
         Story = [Spacer(1,2*inch)]
         style = styles['Normal']
 
         doc.build(Story, onFirstPage=self.intensity_band_metrics, onLaterPages=self.load_metrics)
 
 if __name__ == "__main__":
-    t = GameReportTemplate('','','','','','')
+    t = GameReportTemplate('yassss','','','','','','')
     t.go()

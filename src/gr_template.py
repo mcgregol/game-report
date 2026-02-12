@@ -6,6 +6,9 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
+    PageBreak,
+    Preformatted,
+    NextPageTemplate
 )
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
@@ -197,11 +200,17 @@ class GameReportTemplate:
         sm_relative_tbl = Table(sm_relative_data, colWidths=right_colWidths, repeatRows=1, splitByRow=1)
         sm_relative_tbl.setStyle(self._base_table_style())
 
-        # ---- Story: left table goes into left frame, then framebreak, then right frame
-        Story = []
-        Story.append(sm_team_tbl)
-        Story.append(FrameBreak())
-        Story.append(sm_relative_tbl)
-        Story.append(Spacer(1, 12))
+        # ---- story: left table goes into left frame, then framebreak, then right frame
+        story = []
+        story.append(sm_team_tbl)
+        story.append(FrameBreak())
+        story.append(sm_relative_tbl)
+        story.append(Spacer(1, 12))
 
-        doc.build(Story)
+        #  NEW PAGE FOR NARRATIVES **TESTING**
+        story.append(PageBreak())
+        story.append(Preformatted(self.sm_narrative, styles["BodyText"]))
+        story.append(PageBreak())
+        story.append(Preformatted(self.lm_narrative, styles["BodyText"]))
+
+        doc.build(story)

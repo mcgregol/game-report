@@ -46,5 +46,11 @@ df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3)
 df4['Avg Supra Max Efforts'] = (df4['Avg Supra Max Efforts'] * 100).round(3).astype(str) + '%'
 df4['Avg Very High Intensity Efforts'] = (df4['Avg Very High Intensity Efforts'] * 100).round(3).astype(str) + '%'
 
-t = GameReportTemplate('testing2', '', '', df1, df2, df3, df4)
+#  load samples narratives **for TESTING**
+with open("../docs/sm_narrative", "r") as f:
+    sample_sm_narrative = f.read()
+with open("../docs/lm_narrative", "r") as f:
+    sample_lm_narrative = f.read()
+
+t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4)
 t.go()

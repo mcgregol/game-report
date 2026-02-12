@@ -8,13 +8,13 @@ from reportlab.platypus import (
     TableStyle,
     PageBreak,
     Preformatted,
-    NextPageTemplate
+    NextPageTemplate,
+    Paragraph,
 )
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib import colors
-from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle
 import pandas as pd
 
@@ -47,33 +47,24 @@ class GameReportTemplate:
         self.df_team_sm = df_team_sm
         self.df_relative_sm = df_relative_sm
 
-    #  make sure headers fit in tables
+    # make sure headers fit in tables
     def wrap_table_header(self, data):
         header_style = ParagraphStyle(
             "table_header",
             fontName="Times-Bold",
             fontSize=8,  # smaller than body
             leading=9,
-            alignment=1  # center
+            alignment=1,  # center
         )
-
         data = data.copy()
         data[0] = [Paragraph(str(h), header_style) for h in data[0]]
         return data
 
-    #  header / template layer
+    # header / template layer: KEEP ONLY NON-TEXT DRAWING HERE (e.g., images/lines)
     def intensity_band_metrics(self, canvas, doc):
         canvas.saveState()
 
-        # title
-        canvas.setFont("Times-Bold", 24)
-        canvas.drawCentredString(PAGE_WIDTH / 2, PAGE_HEIGHT - 120, f"Buffalo Sabres vs {opp}")
-
-        # header line
-        canvas.setFont("Times-Roman", 14)
-        canvas.drawCentredString(inch * 6.5, inch * 10.905, f"Game Report - {gd}")
-
-        # images
+        # images (still in header layer)
         canvas.drawImage(
             "../assets/achieve.png",
             doc.leftMargin - inch / 2,
@@ -91,26 +82,19 @@ class GameReportTemplate:
             preserveAspectRatio=True,
         )
 
-        # separation lines
+        # separation lines (optional)
         line_y = inch * 9
-        '''
+        """
         canvas.setLineWidth(2)
         canvas.line(doc.leftMargin, line_y, doc.pagesize[0] - doc.rightMargin, line_y)
 
         line_x = (doc.leftMargin + (doc.pagesize[0] - doc.rightMargin)) / 2
         canvas.line(line_x, inch * 9, line_x, inch * 3)
-        '''
-
-        # labels
-        canvas.setFont("Times-Roman", 12)
-        canvas.drawString(inch * 1.05, line_y - inch / 4, "Player SupraMax Efforts as")
-        canvas.drawString(inch * 1.05, line_y - inch / 2.25, "Percentage of Team Total")
-        canvas.drawString(inch * 4.25, line_y - inch / 4, "Player SupraMax/VHI Efforts")
-        canvas.drawString(inch * 4.25, line_y - inch / 2.25, "Relative to Personal Player Average")
+        """
 
         canvas.restoreState()
 
-    #  fill table with df data
+    # fill table with df data
     def df_to_table_data(self, df: pd.DataFrame):
         df = df.fillna("")
         return [list(df.columns)] + df.astype(str).values.tolist()
@@ -131,11 +115,11 @@ class GameReportTemplate:
         )
 
     def go(self):
-        # Reserve header area with topMargin (so tables start below it)
+        # Reserve header area with topMargin (so flowables start below the image header area)
         leftMargin = 0.75 * inch
         rightMargin = 0.75 * inch
         bottomMargin = 0.75 * inch
-        topMargin = 3.2 * inch  # header space
+        topMargin = 1.5 * inch  # header space for images/etc
 
         doc = BaseDocTemplate(
             f"{self.report_name}.pdf",
@@ -146,18 +130,74 @@ class GameReportTemplate:
             topMargin=topMargin,
         )
 
-        # Two side-by-side frames (splittable across pages!)
+        # --------------------
+        # Styles for story text
+        # --------------------
+        title_style = ParagraphStyle(
+            "story_title",
+            parent=styles["Title"],
+            fontName="Times-Bold",
+            fontSize=20,
+            leading=24,
+            alignment=1,  # centered
+            spaceAfter=6,
+        )
+
+        subtitle_style = ParagraphStyle(
+            "story_subtitle",
+            parent=styles["BodyText"],
+            fontName="Times-Roman",
+            fontSize=14,
+            leading=18,
+            alignment=1,  # centered
+            spaceAfter=8,
+        )
+
+        label_style = ParagraphStyle(
+            "col_label",
+            parent=styles["BodyText"],
+            fontName="Times-Roman",
+            fontSize=12,
+            leading=14,
+            alignment=0,  # left
+            spaceAfter=6,
+        )
+
+        # --------------------
+        # Frames
+        # --------------------
         gutter = 0.2 * inch
         usable_w = doc.width
         col_w = (usable_w - gutter) / 2
+
         y0 = doc.bottomMargin
         h = doc.height
+
+        # A full-width "title frame" inside the content area so the title spans both columns
+        title_h = 0.9 * inch  # adjust if you want more/less vertical space for title + subtitle
+        vgap = 0.1 * inch     # small gap between title area and columns
+
+        title_frame = Frame(
+            doc.leftMargin,
+            y0 + (h - title_h),
+            doc.width,
+            title_h,
+            id="title",
+            showBoundary=0,
+            leftPadding=0,
+            rightPadding=0,
+            topPadding=0,
+            bottomPadding=0,
+        )
+
+        # Two-column frames below the title frame
+        col_h = h - title_h - vgap
 
         left_frame = Frame(
             doc.leftMargin,
             y0,
             col_w,
-            h,
+            col_h,
             id="left",
             showBoundary=0,
             leftPadding=0,
@@ -170,7 +210,7 @@ class GameReportTemplate:
             doc.leftMargin + col_w + gutter,
             y0,
             col_w,
-            h,
+            col_h,
             id="right",
             showBoundary=0,
             leftPadding=0,
@@ -179,15 +219,45 @@ class GameReportTemplate:
             bottomPadding=0,
         )
 
-        template = PageTemplate(id="TwoCol", frames=[left_frame, right_frame], onPage=self.intensity_band_metrics)
-        doc.addPageTemplates([template])
+        # One-column frame for narrative pages
+        onecol_frame = Frame(
+            doc.leftMargin,
+            y0,
+            doc.width,
+            h,
+            id="onecol",
+            showBoundary=0,
+            leftPadding=0,
+            rightPadding=0,
+            topPadding=0,
+            bottomPadding=0,
+        )
 
-        # ---- Build the two tables
+        # --------------------
+        # Page templates
+        # --------------------
+        two_col_tpl = PageTemplate(
+            id="TwoCol",
+            frames=[title_frame, left_frame, right_frame],
+            onPage=self.intensity_band_metrics,
+        )
+
+        # Narrative pages: single column. Keep header images if you want; otherwise set onPage=None.
+        one_col_tpl = PageTemplate(
+            id="OneCol",
+            frames=[onecol_frame],
+            onPage=self.intensity_band_metrics,
+        )
+
+        doc.addPageTemplates([two_col_tpl, one_col_tpl])
+
+        # --------------------
+        # Build tables
+        # --------------------
         sm_team_df = self.df_team_sm.drop(columns=["Total Very High Intensity Efforts"], errors="ignore")
         sm_team_data = self.df_to_table_data(sm_team_df)
         sm_team_data = self.wrap_table_header(sm_team_data)
 
-        # Size columns to the frame width (left table has 2 cols)
         left_colWidths = [col_w * 0.65, col_w * 0.35]
         sm_team_tbl = Table(sm_team_data, colWidths=left_colWidths, repeatRows=1, splitByRow=1)
         sm_team_tbl.setStyle(self._base_table_style())
@@ -195,21 +265,49 @@ class GameReportTemplate:
         sm_relative_data = self.df_to_table_data(self.df_relative_sm.head(19))
         sm_relative_data = self.wrap_table_header(sm_relative_data)
 
-        # Right table has 3 cols (name wider)
         right_colWidths = [col_w * 0.52, col_w * 0.24, col_w * 0.24]
         sm_relative_tbl = Table(sm_relative_data, colWidths=right_colWidths, repeatRows=1, splitByRow=1)
         sm_relative_tbl.setStyle(self._base_table_style())
 
-        # ---- story: left table goes into left frame, then framebreak, then right frame
+        # --------------------
+        # Story
+        # --------------------
         story = []
+
+        # Title goes in the FULL-WIDTH title_frame (spans both columns)
+        story.append(Paragraph(f"Buffalo Sabres vs {opp}", title_style))
+        story.append(Paragraph(f"Game Report - {gd}", subtitle_style))
+        story.append(Spacer(1, 6))  # within title frame; safe if it fits
+
+        # Now flow automatically continues into left_frame (first column)
+        story.append(
+            Paragraph(
+                "Player SupraMax Efforts as<br/>Percentage of Team Total",
+                label_style,
+            )
+        )
         story.append(sm_team_tbl)
+
+        # Move to right column
         story.append(FrameBreak())
+
+        story.append(
+            Paragraph(
+                "Player SupraMax/VHI Efforts<br/>Relative to Personal Player Average",
+                label_style,
+            )
+        )
         story.append(sm_relative_tbl)
+
         story.append(Spacer(1, 12))
 
-        #  NEW PAGE FOR NARRATIVES **TESTING**
+        # --------------------
+        # Switch to single-column layout for narratives (so they don't flow into right column)
+        # --------------------
+        story.append(NextPageTemplate("OneCol"))
         story.append(PageBreak())
         story.append(Preformatted(self.sm_narrative, styles["BodyText"]))
+
         story.append(PageBreak())
         story.append(Preformatted(self.lm_narrative, styles["BodyText"]))
 

@@ -33,7 +33,7 @@ Sentence 2:
 His Total Day DTL was <TD_VALUE> (Rank <TD_RANK>), and Game Only DTL ranked <GO_RANK> (<GO_VALUE>).
 
 OUTPUT FORMAT (MANDATORY)
-- Each player must be its own paragraph of exactly two sentences.
+- Each player must be its own paragraph of exactly two sentences, each on a new line with no spacing.
 - Separate paragraphs with exactly ONE blank line.
 - No title, headings, bullets, or numbering.
 """

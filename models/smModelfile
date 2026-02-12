@@ -35,9 +35,9 @@ Sentence 1 (table A only):
 <PLAYER_NAME> ranked <A_RANK> for Avg Supra Max Efforts (Rank <A_RANK>, <A_AVG_VALUE>; <A_RANGE>).
 
 Sentence 2 (table B lookup or fallback):
-<PLAYER_NAME>'s Total Supra Max Efforts were <B_RANGE> (Rank <B_RANK>, <B_TOTAL_VALUE>).
+His Total Supra Max Efforts were <B_RANGE> (Rank <B_RANK>, <B_TOTAL_VALUE>).
 OR if not found in table B:
-<PLAYER_NAME>'s Total Supra Max Efforts were unavailable.
+His Total Supra Max Efforts were unavailable.
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.

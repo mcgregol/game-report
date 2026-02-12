@@ -44,6 +44,7 @@ df4 = pd.read_excel(sm_relative_file, header=1)
 #  append % sign to sm files
 df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'
 df4['Avg Supra Max Efforts'] = (df4['Avg Supra Max Efforts'] * 100).round(3).astype(str) + '%'
+df4['Avg Very High Intensity Efforts'] = (df4['Avg Very High Intensity Efforts'] * 100).round(3).astype(str) + '%'
 
 t = GameReportTemplate('testing2', '', '', df1, df2, df3, df4)
 t.go()

@@ -75,12 +75,14 @@ class GameReportTemplate:
         )
         canvas.drawImage(
             "../assets/sabres.png",
-            inch * 2.35,
+            inch * 2.1,
             inch * 2.075,
             width=inch * 0.5,
             mask="auto",
             preserveAspectRatio=True,
         )
+        canvas.setFont('Times-Roman', 14)
+        canvas.drawCentredString(inch * 7, inch * 10.905, f'Game Report - {gd}')
 
         # separation lines (optional)
         line_y = inch * 9
@@ -276,7 +278,6 @@ class GameReportTemplate:
 
         # Title goes in the FULL-WIDTH title_frame (spans both columns)
         story.append(Paragraph(f"Buffalo Sabres vs {opp}", title_style))
-        story.append(Paragraph(f"Game Report - {gd}", subtitle_style))
         story.append(Spacer(1, 6))  # within title frame; safe if it fits
 
         # Now flow automatically continues into left_frame (first column)
@@ -287,6 +288,9 @@ class GameReportTemplate:
             )
         )
         story.append(sm_team_tbl)
+
+        #  ADD INTENSITY NOTE HERE
+        story.append(Paragraph('<b>Intensity Note:</b>', styles["BodyText"]))
 
         # Move to right column
         story.append(FrameBreak())

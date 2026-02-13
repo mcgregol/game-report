@@ -9,7 +9,7 @@ from reportlab.platypus import (
     PageBreak,
     Preformatted,
     NextPageTemplate,
-    Paragraph,
+    Paragraph
 )
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
@@ -38,6 +38,7 @@ class GameReportTemplate:
         df_freshness,
         df_team_sm,
         df_relative_sm,
+        intensity_note
     ):
         self.report_name = report_name
         self.sm_narrative = sm_narrative
@@ -46,6 +47,7 @@ class GameReportTemplate:
         self.df_freshness = df_freshness
         self.df_team_sm = df_team_sm
         self.df_relative_sm = df_relative_sm
+        self.intensity_note = intensity_note
 
     # make sure headers fit in tables
     def wrap_table_header(self, data):
@@ -81,18 +83,8 @@ class GameReportTemplate:
             mask="auto",
             preserveAspectRatio=True,
         )
-        canvas.setFont('Times-Roman', 14)
-        canvas.drawCentredString(inch * 7, inch * 10.905, f'Game Report - {gd}')
-
-        # separation lines (optional)
-        line_y = inch * 9
-        """
-        canvas.setLineWidth(2)
-        canvas.line(doc.leftMargin, line_y, doc.pagesize[0] - doc.rightMargin, line_y)
-
-        line_x = (doc.leftMargin + (doc.pagesize[0] - doc.rightMargin)) / 2
-        canvas.line(line_x, inch * 9, line_x, inch * 3)
-        """
+        canvas.setFont("Times-Roman", 14)
+        canvas.drawCentredString(inch * 7, inch * 10.905, f"Game Report - {gd}")
 
         canvas.restoreState()
 
@@ -145,16 +137,6 @@ class GameReportTemplate:
             spaceAfter=6,
         )
 
-        subtitle_style = ParagraphStyle(
-            "story_subtitle",
-            parent=styles["BodyText"],
-            fontName="Times-Roman",
-            fontSize=14,
-            leading=18,
-            alignment=1,  # centered
-            spaceAfter=8,
-        )
-
         label_style = ParagraphStyle(
             "col_label",
             parent=styles["BodyText"],
@@ -163,6 +145,18 @@ class GameReportTemplate:
             leading=14,
             alignment=0,  # left
             spaceAfter=6,
+        )
+
+        # Slightly tighter body for the note so it fits nicely
+        intensity_style = ParagraphStyle(
+            "intensity_note",
+            parent=styles["BodyText"],
+            fontName="Times-Roman",
+            fontSize=9,
+            leading=11,
+            alignment=0,
+            spaceBefore=4,
+            spaceAfter=0,
         )
 
         # --------------------
@@ -175,9 +169,13 @@ class GameReportTemplate:
         y0 = doc.bottomMargin
         h = doc.height
 
-        # A full-width "title frame" inside the content area so the title spans both columns
-        title_h = 0.9 * inch  # adjust if you want more/less vertical space for title + subtitle
-        vgap = 0.1 * inch     # small gap between title area and columns
+        # Full-width title frame inside the content area so the title spans both columns
+        title_h = 0.9 * inch
+        vgap = 0.1 * inch
+
+        # Reserve a bottom band for the intensity note (full width).
+        # Increase this if your note is longer; if it can't fit, it'll push to the next page.
+        note_h = 1.6 * inch
 
         title_frame = Frame(
             doc.leftMargin,
@@ -192,12 +190,12 @@ class GameReportTemplate:
             bottomPadding=0,
         )
 
-        # Two-column frames below the title frame
-        col_h = h - title_h - vgap
+        # Two-column frames above the bottom note band
+        col_h = h - title_h - vgap - note_h
 
         left_frame = Frame(
             doc.leftMargin,
-            y0,
+            y0 + note_h,
             col_w,
             col_h,
             id="left",
@@ -210,10 +208,24 @@ class GameReportTemplate:
 
         right_frame = Frame(
             doc.leftMargin + col_w + gutter,
-            y0,
+            y0 + note_h,
             col_w,
             col_h,
             id="right",
+            showBoundary=0,
+            leftPadding=0,
+            rightPadding=0,
+            topPadding=0,
+            bottomPadding=0,
+        )
+
+        # Bottom full-width note frame
+        note_frame = Frame(
+            doc.leftMargin,
+            y0,
+            doc.width,
+            note_h,
+            id="note",
             showBoundary=0,
             leftPadding=0,
             rightPadding=0,
@@ -238,13 +250,13 @@ class GameReportTemplate:
         # --------------------
         # Page templates
         # --------------------
+        # Order of frames is important: title -> left -> right -> note
         two_col_tpl = PageTemplate(
             id="TwoCol",
-            frames=[title_frame, left_frame, right_frame],
+            frames=[title_frame, left_frame, right_frame, note_frame],
             onPage=self.intensity_band_metrics,
         )
 
-        # Narrative pages: single column. Keep header images if you want; otherwise set onPage=None.
         one_col_tpl = PageTemplate(
             id="OneCol",
             frames=[onecol_frame],
@@ -278,9 +290,9 @@ class GameReportTemplate:
 
         # Title goes in the FULL-WIDTH title_frame (spans both columns)
         story.append(Paragraph(f"Buffalo Sabres vs {opp}", title_style))
-        story.append(Spacer(1, 6))  # within title frame; safe if it fits
+        story.append(Spacer(1, 6))
 
-        # Now flow automatically continues into left_frame (first column)
+        # Left column
         story.append(
             Paragraph(
                 "Player SupraMax Efforts as<br/>Percentage of Team Total",
@@ -289,12 +301,10 @@ class GameReportTemplate:
         )
         story.append(sm_team_tbl)
 
-        #  ADD INTENSITY NOTE HERE
-        story.append(Paragraph('<b>Intensity Note:</b>', styles["BodyText"]))
-
         # Move to right column
         story.append(FrameBreak())
 
+        # Right column
         story.append(
             Paragraph(
                 "Player SupraMax/VHI Efforts<br/>Relative to Personal Player Average",
@@ -303,10 +313,18 @@ class GameReportTemplate:
         )
         story.append(sm_relative_tbl)
 
-        story.append(Spacer(1, 12))
+        # Move to bottom full-width note band
+        story.append(FrameBreak())
+
+        story.append(
+            Paragraph(
+                f"<b>Intensity Note:</b> {self.intensity_note}",
+                intensity_style,
+            )
+        )
 
         # --------------------
-        # Switch to single-column layout for narratives (so they don't flow into right column)
+        # Switch to single-column layout for narratives
         # --------------------
         story.append(NextPageTemplate("OneCol"))
         story.append(PageBreak())

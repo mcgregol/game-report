@@ -52,5 +52,14 @@ with open("../docs/sm_narrative", "r") as f:
 with open("../docs/lm_narrative", "r") as f:
     sample_lm_narrative = f.read()
 
-t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4)
+intensity_note = '''In contrast to 12/31 game, which was generally high in intense efforts on a team level, there
+was much higher variation on 1/3. There were 7 players who displayed SupraMax efforts greater than 105%
+of their personal average. In particular, UPL exhibited an enormous 285% greater than his personal average.
+But at the same time, there were 9 players who displayed efforts less than 95% of their personal average.
+So, as a team, a very uneven effort. Relative to the other games in the month of December, this was the
+lowest effort in terms of SupraMax efforts and Very High Intensity efforts since December 8th. As noted at
+the end of this report, several players had high efforts in the first period, but it was very uneven and as a
+team, it was low.'''
+
+t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, intensity_note)
 t.go()

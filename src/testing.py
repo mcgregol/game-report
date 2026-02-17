@@ -60,6 +60,14 @@ So, as a team, a very uneven effort. Relative to the other games in the month of
 lowest effort in terms of SupraMax efforts and Very High Intensity efforts since December 8th. As noted at
 the end of this report, several players had high efforts in the first period, but it was very uneven and as a
 team, it was low.'''
+load_note = '''As a team, players were relatively fresh for this game. Given the day off
+and practice the day before, with no morning skate, Freshness metrics were bordering on “too
+fresh”, but were not to that point. The team should have been in a good spot going into this game.
+This seems supported by the nature of the 9 players who were above 105% of their average and
+had good intensity. After the game, there are only two players “flagged” with low 3 Day Freshness
+and that flag is “yellow”, which should not be of concern. So, again, the team still seems
+relatively fresh on the whole. That being said, the upcoming game schedule will be of concern
+and having higher freshness to start that game sequence is probably advantageous.'''
 
-t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, intensity_note)
+t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, intensity_note, load_note)
 t.go()

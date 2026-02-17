@@ -324,13 +324,14 @@ class GameReportTemplate:
         )
 
         # --------------------
-        # Switch to single-column layout for narratives
+        # Switch to single-column layout for SM narratives
         # --------------------
         story.append(NextPageTemplate("OneCol"))
         story.append(PageBreak())
-        story.append(Preformatted(self.sm_narrative, styles["BodyText"]))
+        story.append(Paragraph(self.sm_narrative, styles["BodyText"]))
 
+        #  Swtich to single-column layout for LM narratives
         story.append(PageBreak())
-        story.append(Preformatted(self.lm_narrative, styles["BodyText"]))
+        story.append(Paragraph(self.lm_narrative, styles["BodyText"]))
 
         doc.build(story)

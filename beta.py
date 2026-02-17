@@ -1,7 +1,9 @@
 from ollama import ChatResponse
 from ollama import Client
+
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+
 import pandas as pd
 import math
 

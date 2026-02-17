@@ -26,7 +26,7 @@ CRITICAL RULES (MANDATORY)
 3) LOOKUP ONLY FOR SENTENCE 2:
    - For sentence 2, look up that same PLAYER_NAME in table B.
    - If found, copy Rank/Value/Range from table B verbatim.
-   - If NOT found, write: "<PLAYER_NAME>'s Total Supra Max Efforts were unavailable."
+   - If NOT found, write: "His Total Supra Max Efforts were unavailable."
 
 TASK
 For each player in table A order, write EXACTLY TWO sentences:

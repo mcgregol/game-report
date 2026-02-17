@@ -35,13 +35,14 @@ Sentence 1 (table A only):
 <b><PLAYER_NAME></b> ranked <A_RANK> for Avg Supra Max Efforts (Rank <A_RANK>, <A_AVG_VALUE>; <A_RANGE>).
 
 Sentence 2 (table B lookup or fallback):
-His Total Supra Max Efforts were <B_RANGE> (Rank <B_RANK>, <B_TOTAL_VALUE>).
+His Total Supra Max Efforts were <B_RANGE> (Rank <B_RANK>, <B_TOTAL_VALUE>).<br/><br/>
 OR if not found in table B:
-His Total Supra Max Efforts were unavailable.
+His Total Supra Max Efforts were unavailable.<br/><br/>
 
 OUTPUT FORMAT (MANDATORY)
 - Each player must be its own paragraph of exactly two sentences.
 - Wrap player name with HTML bold (<b></b>)
+- After sentence 2, append exactly: '<br/><br/>'. Do not add breaks anywhere else.
 - Separate paragraphs with exactly ONE blank line.
 - No title, headings, bullets, or numbering.
 """

@@ -7,10 +7,10 @@ from reportlab.platypus import (
     Table,
     TableStyle,
     PageBreak,
-    Preformatted,
     NextPageTemplate,
-    Paragraph
+    Paragraph,
 )
+from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
@@ -22,7 +22,6 @@ import pandas as pd
 opp = "Detroit Red Wings"
 gd = "1/7/05"
 
-# page size and styles
 styles = getSampleStyleSheet()
 
 
@@ -37,7 +36,7 @@ class GameReportTemplate:
         df_team_sm,
         df_relative_sm,
         intensity_note,
-        load_note
+        load_note,
     ):
         self.report_name = report_name
         self.sm_narrative = sm_narrative
@@ -87,7 +86,6 @@ class GameReportTemplate:
 
         canvas.restoreState()
 
-    # fill table with df data
     def df_to_table_data(self, df: pd.DataFrame):
         df = df.fillna("")
         return [list(df.columns)] + df.astype(str).values.tolist()
@@ -106,6 +104,55 @@ class GameReportTemplate:
                 ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ]
         )
+
+    def _lm_list_table_style(self):
+        """
+        Load-metrics list style:
+        - no grid
+        - no bold
+        - slightly tighter font/padding so it fits cleanly
+        """
+        return TableStyle(
+            [
+                ("FONTNAME", (0, 0), (-1, -1), "Times-Roman"),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("LEADING", (0, 0), (-1, -1), 10),
+                ("LEFTPADDING", (0, 0), (-1, -1), 1),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 1),
+                ("TOPPADDING", (0, 0), (-1, -1), 0.5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0.5),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+
+    def load_metrics_decor(self, canvas, doc, divider_x):
+        """Draw shared header elements + the vertical divider on the Load Metrics page."""
+        self.metrics_table(canvas, doc)
+        canvas.saveState()
+        canvas.setStrokeColor(colors.HexColor("#1F6F8B"))
+        canvas.setLineWidth(1.25)
+
+        # Vertical divider between Freshness and Game Only DTL
+        y0 = doc.bottomMargin + 0.15 * inch
+        y1 = doc.pagesize[1] - doc.topMargin - 1.05 * inch
+        canvas.line(divider_x, y0, divider_x, y1)
+
+        canvas.restoreState()
+
+    @staticmethod
+    def _format_numeric(series: pd.Series, decimals: int = 2) -> pd.Series:
+        vals = pd.to_numeric(series, errors="coerce").round(decimals)
+        return vals.apply(lambda x: "" if pd.isna(x) else f"{x:.{decimals}f}")
+
+    def _ensure_cols(self, df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
+        """
+        Ensure every expected column exists (prevents row-length mismatches in ReportLab tables).
+        """
+        out = df.copy()
+        for c in cols:
+            if c not in out.columns:
+                out[c] = ""
+        return out[cols]
 
     def go(self):
         leftMargin = 0.75 * inch
@@ -165,6 +212,25 @@ class GameReportTemplate:
             alignment=0,
         )
 
+        lm_title_style = ParagraphStyle(
+            "lm_title",
+            parent=styles["BodyText"],
+            fontName="Times-Bold",
+            fontSize=14,
+            leading=16,
+            spaceAfter=4,
+            spaceBefore=0,
+        )
+        lm_section_style = ParagraphStyle(
+            "lm_section",
+            parent=styles["BodyText"],
+            fontName="Times-Bold",
+            fontSize=10,
+            leading=12,
+            spaceAfter=4,
+            spaceBefore=0,
+        )
+
         # --------------------
         # Frames
         # --------------------
@@ -184,6 +250,14 @@ class GameReportTemplate:
 
         # Bottom band for Load Note on SM narrative pages
         load_h = 1.35 * inch
+
+        # Title band for the Load Metrics page
+        lm_title_h = 0.7 * inch
+
+        # Load Metrics page layout (Freshness gets more room)
+        lm_gutter = 0.28 * inch
+        lm_left_w = doc.width * 0.64
+        lm_right_w = doc.width - lm_left_w - lm_gutter
 
         # --- 2-col page frames ---
         title_frame = Frame(
@@ -233,6 +307,46 @@ class GameReportTemplate:
             doc.width,
             intensity_h,
             id="intensity",
+            showBoundary=0,
+            leftPadding=0,
+            rightPadding=0,
+            topPadding=0,
+            bottomPadding=0,
+        )
+
+        # --- Load Metrics page frames ---
+        lm_title_frame = Frame(
+            doc.leftMargin,
+            y0 + (h - lm_title_h),
+            doc.width,
+            lm_title_h,
+            id="lm_title",
+            showBoundary=0,
+            leftPadding=0,
+            rightPadding=0,
+            topPadding=0,
+            bottomPadding=0,
+        )
+
+        lm_left_frame = Frame(
+            doc.leftMargin,
+            y0,
+            lm_left_w,
+            h - lm_title_h,
+            id="lm_left",
+            showBoundary=0,
+            leftPadding=0,
+            rightPadding=0,
+            topPadding=0,
+            bottomPadding=0,
+        )
+
+        lm_right_frame = Frame(
+            doc.leftMargin + lm_left_w + lm_gutter,
+            y0,
+            lm_right_w,
+            h - lm_title_h,
+            id="lm_right",
             showBoundary=0,
             leftPadding=0,
             rightPadding=0,
@@ -296,17 +410,23 @@ class GameReportTemplate:
             onPage=self.metrics_table,
         )
 
-        # SM narrative pages (main + bottom Load Note band)
+        divider_x = doc.leftMargin + lm_left_w + (lm_gutter / 2)
+        load_metrics_tpl = PageTemplate(
+            id="LoadMetrics",
+            frames=[lm_title_frame, lm_left_frame, lm_right_frame],
+            onPage=lambda c, d: self.load_metrics_decor(c, d, divider_x),
+        )
+
         one_col_load_tpl = PageTemplate(
             id="OneColLoad",
             frames=[onecol_main_frame, onecol_load_frame],
             onPage=self.metrics_table,
         )
 
-        doc.addPageTemplates([two_col_tpl, one_col_tpl, one_col_load_tpl])
+        doc.addPageTemplates([two_col_tpl, load_metrics_tpl, one_col_tpl, one_col_load_tpl])
 
         # --------------------
-        # Build tables
+        # Build tables for page 1
         # --------------------
         sm_team_df = self.df_team_sm.drop(columns=["Total Very High Intensity Efforts"], errors="ignore")
         sm_team_data = self.wrap_table_header(self.df_to_table_data(sm_team_df))
@@ -321,11 +441,105 @@ class GameReportTemplate:
         sm_relative_tbl.setStyle(self._base_table_style())
 
         # --------------------
-        # Story
+        # Build Load Metrics tables (final polish)
+        #   - ensure consistent column counts (fixes misaligned rows)
+        #   - plain header row (NOT bold)
+        #   - balanced widths; name col wide enough for long names
+        # --------------------
+        # Freshness table
+        desired_freshness_cols = ["PLAYER_NAME", "DTL", "CTL", "Freshness (7 day)", "Freshness (3 day)"]
+        freshness_df = self._ensure_cols(self.df_freshness.copy(), desired_freshness_cols).fillna("")
+
+        # Rename headers
+        freshness_df = freshness_df.rename(columns={"Freshness (7 day)": "(7day)", "Freshness (3 day)": "(3day)"})
+        # Format numeric columns (safe even if blank strings)
+        for c in ["DTL", "CTL", "(7day)", "(3day)"]:
+            if c in freshness_df.columns:
+                freshness_df[c] = self._format_numeric(freshness_df[c], decimals=2)
+
+        # Plain header row (blank name header)
+        fr_headers = list(freshness_df.columns)
+        fr_header_row = ["" if h == "PLAYER_NAME" else str(h) for h in fr_headers]
+        fr_rows = [fr_header_row] + freshness_df.astype(str).values.tolist()
+
+        # Column widths:
+        # - Give name column more room so long names don't crush numeric columns
+        # - Keep numeric columns evenly sized so they align cleanly
+        fr_n = len(fr_headers)
+        if fr_n <= 1:
+            fr_col_widths = [lm_left_w]
+        else:
+            fr_name_w = lm_left_w * 0.50
+            fr_rest_w = lm_left_w - fr_name_w
+            fr_col_widths = [fr_name_w] + [fr_rest_w / (fr_n - 1)] * (fr_n - 1)
+
+        freshness_tbl = Table(fr_rows, colWidths=fr_col_widths, repeatRows=0, splitByRow=1)
+        freshness_tbl.setStyle(self._lm_list_table_style())
+        # Align numeric columns centered; keep names left
+        if fr_n > 1:
+            freshness_tbl.setStyle(
+                TableStyle(
+                    [
+                        ("ALIGN", (1, 0), (-1, 0), "CENTER"),   # header labels
+                        ("ALIGN", (1, 1), (-1, -1), "CENTER"), # numeric body
+                        ("ALIGN", (0, 0), (0, -1), "LEFT"),    # names
+                    ]
+                )
+            )
+
+        # Highlight low (3day) values in yellow (<= -30) using the original numeric series
+        if "(3day)" in freshness_df.columns and "Freshness (3 day)" in self.df_freshness.columns:
+            three_day_col_idx = list(freshness_df.columns).index("(3day)")
+            three_vals = pd.to_numeric(self.df_freshness["Freshness (3 day)"], errors="coerce")
+
+            # +1 offset due to header row
+            for i, v in enumerate(three_vals, start=1):
+                if pd.notna(v) and v <= -30:
+                    freshness_tbl.setStyle(
+                        TableStyle(
+                            [("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), colors.yellow)]
+                        )
+                    )
+
+        # Game Only DTL table (keep it simple: PLAYER_NAME + Avg DTL)
+        go_df = self.df_go_dtl.copy()
+        desired_go_cols = ["PLAYER_NAME", "Avg DTL"]
+        go_df = self._ensure_cols(go_df, desired_go_cols).fillna("")
+
+        if "Avg DTL" in go_df.columns:
+            go_df["Avg DTL"] = self._format_numeric(go_df["Avg DTL"], decimals=2)
+
+        go_headers = list(go_df.columns)
+        go_header_row = ["" if h == "PLAYER_NAME" else str(h) for h in go_headers]
+        go_rows = [go_header_row] + go_df.astype(str).values.tolist()
+
+        go_n = len(go_headers)
+        if go_n <= 1:
+            go_col_widths = [lm_right_w]
+        else:
+            go_name_w = lm_right_w * 0.78
+            go_rest_w = lm_right_w - go_name_w
+            go_col_widths = [go_name_w] + [go_rest_w / (go_n - 1)] * (go_n - 1)
+
+        go_tbl = Table(go_rows, colWidths=go_col_widths, repeatRows=0, splitByRow=1)
+        go_tbl.setStyle(self._lm_list_table_style())
+        if go_n > 1:
+            go_tbl.setStyle(
+                TableStyle(
+                    [
+                        ("ALIGN", (1, 0), (-1, 0), "CENTER"),
+                        ("ALIGN", (1, 1), (-1, -1), "CENTER"),
+                        ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                    ]
+                )
+            )
+
+        # --------------------
+        # Story (Load Metrics LAST)
         # --------------------
         story = []
 
-        # --- 2-col page ---
+        # --- Page 1 (2-col) ---
         story.append(Paragraph(f"Buffalo Sabres vs {opp}", title_style))
         story.append(Spacer(1, 6))
 
@@ -342,22 +556,43 @@ class GameReportTemplate:
         story.append(FrameBreak())
         story.append(Paragraph(f"<b>Intensity Note:</b> {self.intensity_note}", note_style))
 
-        # --- SM narrative pages: OneColLoad (main narrative + bottom load note band) ---
+        # --- SM narrative pages (OneColLoad) ---
         story.append(NextPageTemplate("OneColLoad"))
         story.append(PageBreak())
-
-        # Narrative in main frame; can flow to multiple pages (still OneColLoad)
         story.append(Paragraph(self.sm_narrative, narrative_style))
 
-        # When SM narrative is done, move into the bottom band on THAT page template
+        # Bottom load note band (last frame on that template)
         story.append(FrameBreak())
         story.append(Paragraph(f"<b>Load Note:</b> {self.load_note}", note_style))
 
-        # --- LM narrative pages: plain one column (no load note band) ---
-        '''
+        # --- Load Metrics page (LAST) ---
+        story.append(NextPageTemplate("LoadMetrics"))
+        story.append(PageBreak())
+
+        story.append(Paragraph("- Load Metrics", lm_title_style))
+        story.append(
+            HRFlowable(
+                width="100%",
+                thickness=1.25,
+                lineCap="round",
+                color=colors.HexColor("#1F6F8B"),
+                spaceBefore=2,
+                spaceAfter=8,
+            )
+        )
+
+        # Left column
+        story.append(Paragraph("Freshness", lm_section_style))
+        story.append(freshness_tbl)
+
+        # Right column
+        story.append(FrameBreak())
+        story.append(Paragraph("Game Only DTL", lm_section_style))
+        story.append(go_tbl)
+
+        # LM narratives
         story.append(NextPageTemplate("OneCol"))
         story.append(PageBreak())
         story.append(Paragraph(self.lm_narrative, narrative_style))
-        '''
 
         doc.build(story)

@@ -161,7 +161,7 @@ class GameReportTemplate:
         topMargin = 1.5 * inch  # header space for images/etc
 
         doc = BaseDocTemplate(
-            f"{self.report_name}.pdf",
+            f"../docs/{self.report_name}.pdf",
             pagesize=defaultPageSize,
             leftMargin=leftMargin,
             rightMargin=rightMargin,

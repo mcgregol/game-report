@@ -35,8 +35,9 @@ class GameReportTemplate:
         df_freshness,
         df_team_sm,
         df_relative_sm,
+        df_ib_period,
         intensity_note,
-        load_note,
+        load_note
     ):
         self.report_name = report_name
         self.sm_narrative = sm_narrative
@@ -45,8 +46,46 @@ class GameReportTemplate:
         self.df_freshness = df_freshness
         self.df_team_sm = df_team_sm
         self.df_relative_sm = df_relative_sm
+        self.df_ib_period = df_ib_period
         self.intensity_note = intensity_note
         self.load_note = load_note
+
+    def _normalize_ib_period_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        period_ib.xlsx comes in with a 'header row' sitting in row 0:
+          ['Date of DTE','PLAYER_NAME','Avg Supra Max Efforts', ...]
+        and columns like ['Unnamed: 0','Unnamed: 1','Period1','Period2','Period3'].
+
+        This function:
+          - uses row 0 to rename columns properly
+          - drops that row
+          - converts fractions (0.8882) -> percent (88.82)
+          - returns clean df with columns:
+            Date of DTE, PLAYER_NAME, Period1 Avg Supra Max Efforts, ...
+        """
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        out = df.copy()
+
+        # Detect the "row 0 contains headers" pattern
+        if (
+                "Period1" in out.columns
+                and len(out) > 0
+                and str(out.iloc[0].get("Period1", "")).strip().lower().startswith("avg supra")
+        ):
+            # build new column names from row0
+            colmap = {}
+            colmap[out.columns[0]] = str(out.iloc[0, 0]).strip()  # Date of DTE
+            colmap[out.columns[1]] = str(out.iloc[0, 1]).strip()  # PLAYER_NAME
+
+            for c in out.columns[2:]:
+                # c is Period1/2/3; row0 cell is "Avg Supra Max Efforts"
+                colmap[c] = f"{c} {str(out.loc[out.index[0], c]).strip()}"
+
+            out = out.rename(columns=colmap).iloc[1:].reset_index(drop=True)
+
+        return out
 
     # make sure headers fit in tables
     def wrap_table_header(self, data):
@@ -487,18 +526,41 @@ class GameReportTemplate:
                 )
             )
 
-        # Highlight low (3day) values in yellow (<= -30) using the original numeric series
+        # --- Conditional formatting for (3day) to match the screenshot rules ---
+        # Rules (priority order):
+        # 1) <= -60 : red
+        # 2) -30 to -20 : light
+        # 3) -59.9 to 40 : orange (covers most values; placed last so it won't override #2)
+
         if "(3day)" in freshness_df.columns and "Freshness (3 day)" in self.df_freshness.columns:
             three_day_col_idx = list(freshness_df.columns).index("(3day)")
             three_vals = pd.to_numeric(self.df_freshness["Freshness (3 day)"], errors="coerce")
 
-            # +1 offset due to header row
+            red = colors.HexColor("#E53935")
+            orange = colors.HexColor("#FB8C00")
+            light = colors.HexColor("#F6C77A")  # light tan/orange
+
+            # +1 offset due to header row in fr_rows
             for i, v in enumerate(three_vals, start=1):
-                if pd.notna(v) and v <= -30:
+                if pd.isna(v):
+                    continue
+
+                # 1) <= -60
+                if v <= -60:
                     freshness_tbl.setStyle(
-                        TableStyle(
-                            [("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), colors.yellow)]
-                        )
+                        TableStyle([("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), red)])
+                    )
+
+                # 2) Between -30 and -20 (inclusive)
+                elif -30 <= v <= -20:
+                    freshness_tbl.setStyle(
+                        TableStyle([("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), light)])
+                    )
+
+                # 3) Between -59.9 and 40 (inclusive)
+                elif -59.9 <= v <= 40:
+                    freshness_tbl.setStyle(
+                        TableStyle([("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), orange)])
                     )
 
         # Game Only DTL table (keep it simple: PLAYER_NAME + Avg DTL)
@@ -594,5 +656,119 @@ class GameReportTemplate:
         story.append(NextPageTemplate("OneCol"))
         story.append(PageBreak())
         story.append(Paragraph(self.lm_narrative, narrative_style))
+
+        # --------------------
+        # Period IB Table (New Page)
+        # --------------------
+        story.append(NextPageTemplate("OneCol"))
+        story.append(PageBreak())
+
+        story.append(Paragraph("- Period Intensity Breakdown", lm_title_style))
+        story.append(
+            HRFlowable(
+                width="100%",
+                thickness=1.25,
+                lineCap="round",
+                color=colors.HexColor("#1F6F8B"),
+                spaceBefore=2,
+                spaceAfter=8,
+            )
+        )
+
+        period_df = self._normalize_ib_period_df(self.df_ib_period).fillna("")
+        period_df = period_df.drop(columns=["Date of DTE"], errors="ignore")
+
+        # Identify “Avg Supra Max” columns (after normalization they will match)
+        color_cols = [c for c in period_df.columns if "Avg Supra Max" in str(c)]
+
+        def _pct_num(v):
+            """Return numeric percent (e.g. 0.8882 -> 88.82, 88.82 -> 88.82)."""
+            if v is None or (isinstance(v, float) and pd.isna(v)):
+                return None
+            s = str(v).strip()
+            if s == "":
+                return None
+            if s.endswith("%"):
+                s = s[:-1].strip()
+            num = pd.to_numeric(s, errors="coerce")
+            if pd.isna(num):
+                return None
+            if abs(num) <= 2:  # fraction
+                num *= 100
+            return float(num)
+
+        def _pct_str(v):
+            n = _pct_num(v)
+            return "" if n is None else f"{n:.2f}%"
+
+        # Build display df (with % strings)
+        display_df = period_df.copy()
+        for c in color_cols:
+            display_df[c] = display_df[c].apply(_pct_str)
+
+        # Wrap headers like snapshot: "Period2<br/>Avg Supra Max<br/>Efforts"
+        wrapped_headers = []
+        for c in display_df.columns:
+            cc = str(c)
+            if cc.startswith("Period") and "Avg Supra Max" in cc:
+                p = cc.split(" ", 1)[0]  # Period2
+                wrapped_headers.append(f"{p}<br/>Avg Supra Max<br/>Efforts")
+            else:
+                wrapped_headers.append(cc)
+
+        period_data = [wrapped_headers] + display_df.astype(str).values.tolist()
+        period_data = self.wrap_table_header(period_data)
+
+        # --- Column widths (fixed, names first) ---
+        ncols = len(display_df.columns)
+        name_w = doc.width * 0.28  # tweak 0.26–0.32 if you want
+        per_w = (doc.width - name_w) / (ncols - 1)
+        col_widths = [name_w] + [per_w] * (ncols - 1)
+
+        period_tbl = Table(period_data, colWidths=col_widths, repeatRows=1, splitByRow=1)
+        period_tbl.setStyle(
+            TableStyle(
+                [
+                    ("GRID", (0, 0), (-1, -1), 0.35, colors.black),
+                    ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 9),
+                    ("FONTSIZE", (0, 1), (-1, -1), 9),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                    ("ALIGN", (1, 0), (-1, 0), "CENTER"),
+                    ("ALIGN", (1, 1), (-1, -1), "CENTER"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ]
+            )
+        )
+
+        # Conditional formatting rules (per your screenshot)
+        red = colors.HexColor("#E53935")  # > 100
+        orange = colors.HexColor("#FB8C00")  # 80–100
+        yellow = colors.HexColor("#FBC02D")  # 60–80
+        green = colors.HexColor("#5CB85C")  # < 60
+
+        for c in color_cols:
+            col_idx = list(period_df.columns).index(c)
+            for r in range(len(period_df)):
+                v = _pct_num(period_df.iloc[r][c])
+                if v is None:
+                    continue
+
+                if v > 100:
+                    bg = red
+                elif 80 <= v <= 100:
+                    bg = orange
+                elif 60 <= v < 80:
+                    bg = yellow
+                else:
+                    bg = green
+
+                period_tbl.setStyle(TableStyle([("BACKGROUND", (col_idx, r + 1), (col_idx, r + 1), bg)]))
+
+        story.append(period_tbl)
 
         doc.build(story)

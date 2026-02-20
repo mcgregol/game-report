@@ -34,14 +34,16 @@ go_dtl_file = '../data/1-31-26/Game_Only_DTL-1-26-31v2.xlsx'
 freshness_file = '../data/1-31-26/Indidivudal_Freshness_Summary-_Game_Report-1-31-26v2.xlsx'
 sm_team_file = '../data/1-31-26/Intensity_Band_player_Game-1-31-26v2.xlsx'
 sm_relative_file = '../data/1-31-26/Intensity_Band_player_Relative_-_Game1-31-26v2.xlsx'
+ib_period_file = '../data/period_ib.xlsx'
 
 #  Create dataframes
 df1 = pd.read_excel(go_dtl_file)
 df2 = pd.read_excel(freshness_file)
 df3 = pd.read_excel(sm_team_file, header=1)
 df4 = pd.read_excel(sm_relative_file, header=1)
+df5 = pd.read_excel(ib_period_file)
 
-#  append % sign to sm files
+#  append % sign to sm & period IB files
 df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'
 df4['Avg Supra Max Efforts'] = (df4['Avg Supra Max Efforts'] * 100).round(3).astype(str) + '%'
 df4['Avg Very High Intensity Efforts'] = (df4['Avg Very High Intensity Efforts'] * 100).round(3).astype(str) + '%'
@@ -69,5 +71,5 @@ and that flag is “yellow”, which should not be of concern. So, again, the te
 relatively fresh on the whole. That being said, the upcoming game schedule will be of concern
 and having higher freshness to start that game sequence is probably advantageous.'''
 
-t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, intensity_note, load_note)
+t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, df5, intensity_note, load_note)
 t.go()

@@ -70,6 +70,11 @@ had good intensity. After the game, there are only two players “flagged” wit
 and that flag is “yellow”, which should not be of concern. So, again, the team still seems
 relatively fresh on the whole. That being said, the upcoming game schedule will be of concern
 and having higher freshness to start that game sequence is probably advantageous.'''
+ib_period_note = '''In contrast to the previous couple games, this game was quite uneven in terms of SupraMax intensity
+efforts over the course of the game. In the first period, the team average of 99.7% of game average.
+Several players though had very low efforts in the first period. Notably, five players were below 90%
+of game average in the first period. The second period was well above game average at 106%, but
+the third was lower again.'''
 
-t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, df5, intensity_note, load_note)
+t = GameReportTemplate('testing2', sample_sm_narrative, sample_lm_narrative, df1, df2, df3, df4, df5, intensity_note, load_note, ib_period_note)
 t.go()

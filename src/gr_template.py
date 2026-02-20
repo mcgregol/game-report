@@ -8,7 +8,7 @@ from reportlab.platypus import (
     TableStyle,
     PageBreak,
     NextPageTemplate,
-    Paragraph,
+    Paragraph
 )
 from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet
@@ -37,7 +37,8 @@ class GameReportTemplate:
         df_relative_sm,
         df_ib_period,
         intensity_note,
-        load_note
+        load_note,
+        ib_period_note
     ):
         self.report_name = report_name
         self.sm_narrative = sm_narrative
@@ -49,6 +50,7 @@ class GameReportTemplate:
         self.df_ib_period = df_ib_period
         self.intensity_note = intensity_note
         self.load_note = load_note
+        self.ib_period_note = ib_period_note
 
     def _normalize_ib_period_df(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -663,7 +665,7 @@ class GameReportTemplate:
         story.append(NextPageTemplate("OneCol"))
         story.append(PageBreak())
 
-        story.append(Paragraph("- Period Intensity Breakdown", lm_title_style))
+        story.append(Paragraph("- Intensity Band Distribution by Period", lm_title_style))
         story.append(
             HRFlowable(
                 width="100%",
@@ -770,5 +772,9 @@ class GameReportTemplate:
                 period_tbl.setStyle(TableStyle([("BACKGROUND", (col_idx, r + 1), (col_idx, r + 1), bg)]))
 
         story.append(period_tbl)
+
+        #  Intensity band by period note
+        story.append(Spacer(1, inch/2))
+        story.append(Paragraph(f"<b>Intensity Band Distribution by Period:</b> {self.ib_period_note}", note_style))
 
         doc.build(story)

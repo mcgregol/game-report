@@ -18,10 +18,6 @@ from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 import pandas as pd
 
-# sets game date & other team's name
-opp = "Detroit Red Wings"
-gd = "1/7/05"
-
 styles = getSampleStyleSheet()
 
 
@@ -29,6 +25,8 @@ class GameReportTemplate:
     def __init__(
         self,
         report_name,
+        opponent,
+        game_date,
         sm_narrative,
         lm_narrative,
         df_go_dtl,
@@ -41,6 +39,8 @@ class GameReportTemplate:
         ib_period_note
     ):
         self.report_name = report_name
+        self.opponent = opponent
+        self.game_date = game_date
         self.sm_narrative = sm_narrative
         self.lm_narrative = lm_narrative
         self.df_go_dtl = df_go_dtl
@@ -107,7 +107,7 @@ class GameReportTemplate:
         canvas.saveState()
 
         canvas.drawImage(
-            "../assets/achieve.png",
+            "assets/achieve.png",
             doc.leftMargin - inch / 2,
             inch * 9.75,
             width=inch * 1.75,
@@ -115,7 +115,7 @@ class GameReportTemplate:
             preserveAspectRatio=True,
         )
         canvas.drawImage(
-            "../assets/sabres.png",
+            "assets/sabres.png",
             inch * 2.1,
             inch * 2.075,
             width=inch * 0.5,
@@ -123,7 +123,7 @@ class GameReportTemplate:
             preserveAspectRatio=True,
         )
         canvas.setFont("Times-Roman", 14)
-        canvas.drawCentredString(inch * 7, inch * 10.905, f"Game Report - {gd}")
+        canvas.drawCentredString(inch * 7, inch * 10.905, f"Game Report - {self.game_date}")
 
         canvas.restoreState()
 
@@ -202,7 +202,7 @@ class GameReportTemplate:
         topMargin = 1.5 * inch  # header space for images/etc
 
         doc = BaseDocTemplate(
-            f"../docs/{self.report_name}.pdf",
+            f"{self.report_name}.pdf",
             pagesize=defaultPageSize,
             leftMargin=leftMargin,
             rightMargin=rightMargin,
@@ -604,7 +604,7 @@ class GameReportTemplate:
         story = []
 
         # --- Page 1 (2-col) ---
-        story.append(Paragraph(f"Buffalo Sabres vs {opp}", title_style))
+        story.append(Paragraph(f"Buffalo Sabres vs {self.opponent}", title_style))
         story.append(Spacer(1, 6))
 
         # Left col

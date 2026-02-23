@@ -1,11 +1,15 @@
 from ollama import ChatResponse
 from ollama import Client
 from tkinter import Tk
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 import pandas as pd
 import math
 
-#  define function for creating data ranges
+from src.gr_template import GameReportTemplate
+
+###########################################
+#  Define function for creating data ranges
+###########################################
 def add_range_from_rank(df, rank_col='Rank', out_col='Range'):
     n = len(df)
     h = math.floor(n / 3)
@@ -21,6 +25,19 @@ def add_range_from_rank(df, rank_col='Rank', out_col='Range'):
     df[out_col] = df[rank_col].apply(label)
     return df
 
+################################
+#  Gather other params from user
+################################
+rn = asksaveasfilename()
+opponent = input('Enter opposing team name: ')
+game_date = input('Enter game date(mm/dd/yy): ')
+intn = input('Enter intensity note: ')
+ln = input('Enter load note: ')
+ibn = input('Enter intensity note by period: ')
+
+###############################
+#  Creates narratives with qwen
+###############################
 #  Create custom client
 client = Client(
     host='http://192.168.1.47:11434')
@@ -33,12 +50,21 @@ go_dtl_file = askopenfilename(title="Select game-only DTL Excel file", filetypes
 freshness_file = askopenfilename(title="Select Freshness Excel file", filetypes=[("Excel files","*.xlsx")])
 sm_team_file = askopenfilename(title="Select SupraMax team file", filetypes=[("Excel files","*.xlsx")])
 sm_relative_file = askopenfilename(title="Select SupraMax relative file", filetypes=[("Excel files","*.xlsx")])
+ib_period_file = askopenfilename(title="Select intensity band by period file", filetypes=[("Excel files","*.xlsx")])
 
-#  Create dataframes
+#  Create dataframes for qwen
 df1 = pd.read_excel(go_dtl_file)
 df2 = pd.read_excel(freshness_file)
 df3 = pd.read_excel(sm_team_file, header=1)
 df4 = pd.read_excel(sm_relative_file, header=1)
+df5 = pd.read_excel(ib_period_file)
+
+#  create stock dataframes
+stock_df1 = pd.read_excel(go_dtl_file)
+stock_df2 = pd.read_excel(freshness_file)
+stock_df3 = pd.read_excel(sm_team_file, header=1)
+stock_df4 = pd.read_excel(sm_relative_file, header=1)
+stock_df5 = pd.read_excel(ib_period_file)
 
 #  #  Swap placement of tdDTL and 3day && Trim off 7day and sort 3day
 df2 = df2.drop(columns=['Freshness (7 day)', 'CTL'])
@@ -72,9 +98,14 @@ print(len(df4))
 df4.insert(0, 'Rank', range(1, len(df4) + 1))
 df4 = add_range_from_rank(df4, rank_col='Rank', out_col='Range')
 
-#  append % sign to sm files
+#  append % sign to sm files for qwen
 df3['Total Supra Max Efforts'] = (df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'
 df4['Avg Supra Max Efforts'] = (df4['Avg Supra Max Efforts'] * 100).round(3).astype(str) + '%'
+
+#  append % sign to stock files
+stock_df3['Total Supra Max Efforts'] = (stock_df3['Total Supra Max Efforts'] * 100).round(3).astype(str) + '%'
+stock_df4['Avg Supra Max Efforts'] = (stock_df4['Avg Supra Max Efforts'] * 100).round(3).astype(str) + '%'
+stock_df4['Avg Very High Intensity Efforts'] = (stock_df4['Avg Very High Intensity Efforts'] * 100).round(3).astype(str) + '%'
 
 #  Convert xlsx to MD
 go_dtl_md = df1.to_markdown(index=False)
@@ -83,6 +114,8 @@ sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 
 print(f'{sm_team_md}\n{sm_relative_md}\n{go_dtl_md}\n{freshness_md}\n')
+
+print('\nSending to Qwen...\nWorking...')
 
 #  Build and send prompt to Ollama for SupraMax metrics
 response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
@@ -100,11 +133,9 @@ response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
         'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
     }
 ])
-
 sm_narrative = response.message.content
-print(response.message.content)
 
-print('******************************************************************************************\n------------------------------------------------------------------------------------------\n******************************************************************************************\n')
+print('SupraMax metrics complete')
 
 #  Build and send prompt to Ollama for Load Metrics
 response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
@@ -117,10 +148,36 @@ response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
         'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
     }
 ])
-
 lm_narrative = response.message.content
-print(response.message.content)
 
-#game_report_final = GameReportTemplate(sm_narrative, lm_narrative, 'googly.pdf')
+print('Load Metrics complete\nDone processing with Qwen!')
 
-EXIT = input("Press ENTER to exit")
+'''
+################
+#  Testing block
+#  Simulates Qwen
+#################
+with open('docs/sm_narrative', 'r') as f:
+    sample_sm = f.read()
+with open('docs/lm_narrative', 'r') as f:
+    sample_lm = f.read()
+'''
+
+##########################
+#  Build and create report
+##########################
+t = GameReportTemplate(
+    rn,
+    opponent,
+    game_date,
+    sm_narrative,
+    lm_narrative,
+    stock_df1,
+    stock_df2,
+    stock_df3,
+    stock_df4,
+    stock_df5,
+    intn,
+    ln,
+    ibn)
+t.go()

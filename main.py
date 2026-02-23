@@ -40,7 +40,8 @@ ibn = input('Enter intensity note by period: ')
 ###############################
 #  Create custom client
 client = Client(
-    host='http://192.168.1.47:11434')
+    host='http://192.168.1.47:11434',
+    timeout=15)
 
 #  Hide tkinter
 Tk().withdraw()
@@ -118,50 +119,48 @@ print(f'{sm_team_md}\n{sm_relative_md}\n{go_dtl_md}\n{freshness_md}\n')
 print('\nSending to Qwen...\nWorking...')
 
 #  Build and send prompt to Ollama for SupraMax metrics
-response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
-    {
-        #  for system role tweaks, use modelfile
-        'role': 'user',
-        'content': f'Here is data including the Avg Supra Max Efforts:\n{sm_relative_md}'
-    },
-    {
-        'role': 'user',
-        'content': f'Here is data including the team total Supra Max data:\n{sm_team_md}'
-    },
-    {
-        'role': 'user',
-        'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
-    }
-])
-sm_narrative = response.message.content
+try:
+    response: ChatResponse = client.chat(model='sm-data-analyst:latest', messages=[
+        {
+            #  for system role tweaks, use modelfile
+            'role': 'user',
+            'content': f'Here is data including the Avg Supra Max Efforts:\n{sm_relative_md}'
+        },
+        {
+            'role': 'user',
+            'content': f'Here is data including the team total Supra Max data:\n{sm_team_md}'
+        },
+        {
+            'role': 'user',
+            'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
+        }
+    ])
+    sm_narrative = response.message.content
 
-print('SupraMax metrics complete')
+    print('SupraMax metrics complete')
 
-#  Build and send prompt to Ollama for Load Metrics
-response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
-    {
-        'role': 'user',
-        'content': f'Here is the freshness & total day DTL data:\n{freshness_md}'
-    },
-    {
-        'role': 'user',
-        'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
-    }
-])
-lm_narrative = response.message.content
+    #  Build and send prompt to Ollama for Load Metrics
+    response: ChatResponse = client.chat(model='lm-data-analyst:latest', messages=[
+        {
+            'role': 'user',
+            'content': f'Here is the freshness & total day DTL data:\n{freshness_md}'
+        },
+        {
+            'role': 'user',
+            'content': f'Here is the game-only DTL data:\n{go_dtl_md}'
+        }
+    ])
+    lm_narrative = response.message.content
 
-print('Load Metrics complete\nDone processing with Qwen!')
-
-'''
-################
-#  Testing block
-#  Simulates Qwen
-#################
-with open('docs/sm_narrative', 'r') as f:
-    sample_sm = f.read()
-with open('docs/lm_narrative', 'r') as f:
-    sample_lm = f.read()
-'''
+    print('Load Metrics complete\nDone processing with Qwen!')
+except Exception as e:
+    print('Timeout Qwen\nUsing sample data instead...')
+    #  Testing block
+    #  Simulates Qwen
+    with open('docs/sm_narrative', 'r') as f:
+        sm_narrative = f.read()
+    with open('docs/lm_narrative', 'r') as f:
+        lm_narrative = f.read()
 
 ##########################
 #  Build and create report

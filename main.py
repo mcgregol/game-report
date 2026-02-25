@@ -3,9 +3,12 @@ from ollama import Client
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import pandas as pd
-import math
+import math, sys, os
 
 from src.gr_template import GameReportTemplate
+
+if getattr(sys, 'frozen', False):
+        os.chdir(os.path.dirname(sys.executable))
 
 ###########################################
 #  Define function for creating data ranges

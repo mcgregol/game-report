@@ -43,8 +43,7 @@ num_freshness = input('Enter player freshness player count(blank for default): '
 ###############################
 #  Create custom client
 client = Client(
-    host='http://192.168.1.47:11434',
-    timeout=15)
+    host='http://192.168.1.47:11434')
 
 #  Hide tkinter
 Tk().withdraw()

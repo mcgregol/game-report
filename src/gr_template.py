@@ -174,9 +174,13 @@ class GameReportTemplate:
         canvas.setLineWidth(1.25)
 
         # Vertical divider between Freshness and Game Only DTL
-        y0 = doc.bottomMargin + 0.15 * inch
-        y1 = doc.pagesize[1] - doc.topMargin - 1.05 * inch
-        canvas.line(divider_x, y0, divider_x, y1)
+        lm_title_h = 0.7 * inch  # must match lm_title_h in go()
+
+        # Top of the LM content frames (below the LM title band)
+        y_top = doc.bottomMargin + doc.height - lm_title_h
+        y_bottom = y_top - getattr(self, "_lm_divider_height", 0)
+
+        canvas.line(divider_x, y_bottom, divider_x, y_top)
 
         canvas.restoreState()
 
@@ -597,6 +601,17 @@ class GameReportTemplate:
                     ]
                 )
             )
+        # Force tables to calculate their size
+        fw, fh = freshness_tbl.wrap(lm_left_w, doc.height)
+        gw, gh = go_tbl.wrap(lm_right_w, doc.height)
+
+        # Include the section header paragraphs ("Freshness", "Game Only DTL")
+        p_f = Paragraph("Freshness", lm_section_style)
+        p_g = Paragraph("Game Only DTL", lm_section_style)
+        _, p_f_h = p_f.wrap(lm_left_w, doc.height)
+        _, p_g_h = p_g.wrap(lm_right_w, doc.height)
+
+        self._lm_divider_height = max(p_f_h + fh, p_g_h + gh)
 
         # --------------------
         # Story (Load Metrics LAST)

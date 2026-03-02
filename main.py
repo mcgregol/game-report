@@ -202,9 +202,3 @@ t = GameReportTemplate(
 t.go()
 
 EXIT = input("Press ENTER to close...")
-
-'''
-TODO:
-* Add hold until exit
-* Add params for amount of players displayed
-'''

@@ -477,12 +477,17 @@ class GameReportTemplate:
         sm_team_data = self.wrap_table_header(self.df_to_table_data(sm_team_df))
 
         left_colWidths = [col_w * 0.65, col_w * 0.35]
-        sm_team_tbl = Table(sm_team_data, colWidths=left_colWidths, repeatRows=1, splitByRow=1)
+        # Fixed header row height so both SM tables share the same height and
+        # their rows stay vertically aligned across columns.
+        sm_header_h = 40
+        sm_team_row_heights = [sm_header_h] + [None] * (len(sm_team_data) - 1)
+        sm_team_tbl = Table(sm_team_data, colWidths=left_colWidths, rowHeights=sm_team_row_heights, repeatRows=1, splitByRow=1)
         sm_team_tbl.setStyle(self._base_table_style())
 
         sm_relative_data = self.wrap_table_header(self.df_to_table_data(self.df_relative_sm.head(19)))
         right_colWidths = [col_w * 0.52, col_w * 0.24, col_w * 0.24]
-        sm_relative_tbl = Table(sm_relative_data, colWidths=right_colWidths, repeatRows=1, splitByRow=1)
+        sm_relative_row_heights = [sm_header_h] + [None] * (len(sm_relative_data) - 1)
+        sm_relative_tbl = Table(sm_relative_data, colWidths=right_colWidths, rowHeights=sm_relative_row_heights, repeatRows=1, splitByRow=1)
         sm_relative_tbl.setStyle(self._base_table_style())
 
         # --------------------
@@ -659,6 +664,9 @@ class GameReportTemplate:
                 spaceAfter=8,
             )
         )
+        # Force a frame break so "Freshness" and "Game Only DTL" both land at the
+        # top of their respective content frames and stay on the same horizontal line.
+        story.append(FrameBreak())
 
         # Left column
         story.append(Paragraph("Freshness", lm_section_style))

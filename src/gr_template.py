@@ -230,7 +230,7 @@ class GameReportTemplate:
         label_style = ParagraphStyle(
             "col_label",
             parent=styles["BodyText"],
-            fontName="Times-Roman",
+            fontName="Times-Bold",
             fontSize=12,
             leading=14,
             alignment=0,

@@ -82,16 +82,12 @@ if num_freshness.strip() != '':
 
     df1 = df1.head(pc)
     df2 = df2.head(pc)
-    stock_df1 = stock_df1.head(pc)
-    stock_df2 = stock_df2.head(pc)
 
 if num_intensity.strip() != '':
     pc = int(num_intensity)
 
     df3 = df3.head(pc)
     df4 = df4.head(pc)
-    stock_df3 = stock_df3.head(pc)
-    stock_df4 = stock_df4.head(pc)
 
 df2.insert(3, 'DTL', df2.pop('DTL'))
 df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
@@ -204,3 +200,9 @@ t = GameReportTemplate(
 t.go()
 
 EXIT = input("Press ENTER to close...")
+
+'''
+TODO:
+* Remove player count for raw data tables
+* clean up alignment in template
+'''

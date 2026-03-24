@@ -200,9 +200,3 @@ t = GameReportTemplate(
 t.go()
 
 EXIT = input("Press ENTER to close...")
-
-'''
-TODO:
-* Remove player count for raw data tables
-* clean up alignment in template
-'''

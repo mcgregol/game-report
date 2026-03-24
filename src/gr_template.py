@@ -1,3 +1,5 @@
+import os
+
 from reportlab.platypus import (
     BaseDocTemplate,
     PageTemplate,
@@ -16,10 +18,21 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.pdfmetrics import registerFontFamily
 import pandas as pd
 
 styles = getSampleStyleSheet()
 
+#  register custom arial font family
+pdfmetrics.registerFont(TTFont("Arial", "arial.ttf"))
+pdfmetrics.registerFont((TTFont("Arial-Bold", "arialbd.ttf")))
+registerFontFamily(
+    "Arial",
+    normal="Arial",
+    bold="Arial-Bold"
+)
 
 class GameReportTemplate:
     def __init__(
@@ -93,7 +106,7 @@ class GameReportTemplate:
     def wrap_table_header(self, data):
         header_style = ParagraphStyle(
             "table_header",
-            fontName="Times-Bold",
+            fontName="Arial-Bold",
             fontSize=8,
             leading=9,
             alignment=1,  # center
@@ -122,7 +135,7 @@ class GameReportTemplate:
             mask="auto",
             preserveAspectRatio=True,
         )
-        canvas.setFont("Times-Roman", 14)
+        canvas.setFont("Arial", 14)
         canvas.drawCentredString(inch * 7, inch * 10.905, f"Game Report - {self.game_date}")
 
         canvas.restoreState()
@@ -135,7 +148,7 @@ class GameReportTemplate:
         return TableStyle(
             [
                 ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-                ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+                ("FONTNAME", (0, 0), (-1, 0), "Arial-Bold"),
                 ("LINEBELOW", (0, 0), (-1, 0), 1, colors.black),
                 ("FONTSIZE", (0, 0), (-1, -1), 9),
                 ("LEFTPADDING", (0, 0), (-1, -1), 6),
@@ -155,7 +168,7 @@ class GameReportTemplate:
         """
         return TableStyle(
             [
-                ("FONTNAME", (0, 0), (-1, -1), "Times-Roman"),
+                ("FONTNAME", (0, 0), (-1, -1), "Arial"),
                 ("FONTSIZE", (0, 0), (-1, -1), 9),
                 ("LEADING", (0, 0), (-1, -1), 10),
                 ("LEFTPADDING", (0, 0), (-1, -1), 1),
@@ -220,7 +233,7 @@ class GameReportTemplate:
         title_style = ParagraphStyle(
             "story_title",
             parent=styles["Title"],
-            fontName="Times-Bold",
+            fontName="Arial-Bold",
             fontSize=20,
             leading=24,
             alignment=1,
@@ -230,7 +243,7 @@ class GameReportTemplate:
         label_style = ParagraphStyle(
             "col_label",
             parent=styles["BodyText"],
-            fontName="Times-Bold",
+            fontName="Arial-Bold",
             fontSize=12,
             leading=14,
             alignment=0,
@@ -240,7 +253,7 @@ class GameReportTemplate:
         note_style = ParagraphStyle(
             "note_style",
             parent=styles["BodyText"],
-            fontName="Times-Roman",
+            fontName="Arial",
             fontSize=9,
             leading=11,
             alignment=0,
@@ -251,7 +264,7 @@ class GameReportTemplate:
         narrative_style = ParagraphStyle(
             "narrative",
             parent=styles["BodyText"],
-            fontName="Times-Roman",
+            fontName="Arial",
             fontSize=10,
             leading=12,
             alignment=0,
@@ -260,7 +273,7 @@ class GameReportTemplate:
         lm_title_style = ParagraphStyle(
             "lm_title",
             parent=styles["BodyText"],
-            fontName="Times-Bold",
+            fontName="Arial-Bold",
             fontSize=14,
             leading=16,
             spaceAfter=4,
@@ -269,7 +282,7 @@ class GameReportTemplate:
         lm_section_style = ParagraphStyle(
             "lm_section",
             parent=styles["BodyText"],
-            fontName="Times-Bold",
+            fontName="Arial-Bold",
             fontSize=10,
             leading=12,
             spaceAfter=4,
@@ -755,7 +768,7 @@ class GameReportTemplate:
             TableStyle(
                 [
                     ("GRID", (0, 0), (-1, -1), 0.35, colors.black),
-                    ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Arial-Bold"),
                     ("FONTSIZE", (0, 0), (-1, 0), 9),
                     ("FONTSIZE", (0, 1), (-1, -1), 9),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),

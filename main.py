@@ -7,6 +7,13 @@ import math
 
 from src.gr_template import GameReportTemplate
 
+'''
+TODO:
+* Change note font size (DONE)
+* LM ollama data needs to be rounded to hundredths
+* Conditional formatting
+'''
+
 OLLAMA_HOST = 'http://192.168.1.47:11434'
 
 ###########################################
@@ -28,7 +35,7 @@ def add_range_from_rank(df, rank_col='Rank', out_col='Range'):
     return df
 
 ################################
-#  Gather other params from user
+#  Gather other data params from user
 ################################
 rn = asksaveasfilename()
 opponent = input('Enter opposing team name: ')
@@ -90,7 +97,6 @@ if num_intensity.strip() != '':
     df4 = df4.head(pc)
 
 df2.insert(3, 'DTL', df2.pop('DTL'))
-df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
 
 #  rename DTL to td DTL & add respective rankings
 df2 = df2.rename(columns={'DTL': 'Total Day DTL'})
@@ -127,8 +133,8 @@ stock_df4['Avg Supra Max Efforts'] = (stock_df4['Avg Supra Max Efforts'] * 100).
 stock_df4['Avg Very High Intensity Efforts'] = (stock_df4['Avg Very High Intensity Efforts'] * 100).round(3).astype(str) + '%'
 
 #  Convert xlsx to MD
-go_dtl_md = df1.to_markdown(index=False)
-freshness_md = df2.to_markdown(index=False)
+go_dtl_md = df1.round(2).to_markdown(index=False)
+freshness_md = df2.round(2).to_markdown(index=False)
 sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 

@@ -1,5 +1,3 @@
-import os
-
 from reportlab.platypus import (
     BaseDocTemplate,
     PageTemplate,
@@ -254,7 +252,7 @@ class GameReportTemplate:
             "note_style",
             parent=styles["BodyText"],
             fontName="Arial",
-            fontSize=9,
+            fontSize=12,
             leading=11,
             alignment=0,
             spaceBefore=4,
@@ -550,11 +548,11 @@ class GameReportTemplate:
                 )
             )
 
-        # --- Conditional formatting for (3day) to match the screenshot rules ---
+        # --- Conditional formatting for (3day) ---
         # Rules (priority order):
         # 1) <= -60 : red
         # 2) -30 to -20 : light
-        # 3) -59.9 to 40 : orange (covers most values; placed last so it won't override #2)
+        # 3) -59.9 to -40 : orange
 
         if "(3day)" in freshness_df.columns and "Freshness (3 day)" in self.df_freshness.columns:
             three_day_col_idx = list(freshness_df.columns).index("(3day)")
@@ -576,18 +574,50 @@ class GameReportTemplate:
                     )
 
                 # 2) Between -30 and -20 (inclusive)
-                elif -30 <= v <= -20:
+                elif -39.999 <= v <= -30:
                     freshness_tbl.setStyle(
                         TableStyle([("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), light)])
                     )
 
-                # 3) Between -59.9 and 40 (inclusive)
-                elif -59.9 <= v <= 40:
+                # 3) Between -59.9 and -40 (inclusive)
+                elif -59.9 <= v <= -40:
                     freshness_tbl.setStyle(
                         TableStyle([("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), orange)])
                     )
 
-        # Game Only DTL table (keep it simple: PLAYER_NAME + Avg DTL)
+        #  --- 7day Conditional formatting
+        if "(7day)" in freshness_df.columns and "Freshness (7 day)" in self.df_freshness.columns:
+            seven_day_col_idx = list(freshness_df.columns).index("(7day)")
+            seven_vals = pd.to_numeric(self.df_freshness["Freshness (7 day)"], errors="coerce")
+
+            red = colors.HexColor("#E53935")
+            orange = colors.HexColor("#FB8C00")
+            light = colors.HexColor("#F6C77A")  # light tan/orange
+
+            # +1 offset due to header row in fr_rows
+            for i, v in enumerate(seven_vals, start=1):
+                if pd.isna(v):
+                    continue
+
+                # 1) <= -40
+                if v <= -40:
+                    freshness_tbl.setStyle(
+                        TableStyle([("BACKGROUND", (seven_day_col_idx, i), (seven_day_col_idx, i), red)])
+                    )
+
+                # 2) Between -29.999 and -20 (inclusive)
+                elif -29.999 <= v <= -20:
+                    freshness_tbl.setStyle(
+                        TableStyle([("BACKGROUND", (seven_day_col_idx, i), (seven_day_col_idx, i), light)])
+                    )
+
+                # 3) Between -40 and -30 (inclusive)
+                elif -40 <= v <= -30:
+                    freshness_tbl.setStyle(
+                        TableStyle([("BACKGROUND", (seven_day_col_idx, i), (seven_day_col_idx, i), orange)])
+                    )
+
+        # Game Only DTL table
         go_df = self.df_go_dtl.copy()
         desired_go_cols = ["PLAYER_NAME", "Avg DTL"]
         go_df = self._ensure_cols(go_df, desired_go_cols).fillna("")
@@ -796,11 +826,11 @@ class GameReportTemplate:
                 if v is None:
                     continue
 
-                if v > 100:
+                if v > 120:
                     bg = red
-                elif 80 <= v <= 100:
+                elif 105 <= v <= 120:
                     bg = orange
-                elif 60 <= v < 80:
+                elif 95 <= v <= 104.999:
                     bg = yellow
                 else:
                     bg = green

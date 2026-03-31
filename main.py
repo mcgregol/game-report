@@ -7,13 +7,6 @@ import math
 
 from src.gr_template import GameReportTemplate
 
-'''
-TODO:
-* Change note font size (DONE)
-* LM ollama data needs to be rounded to hundredths
-* Conditional formatting
-'''
-
 OLLAMA_HOST = 'http://192.168.1.47:11434'
 
 ###########################################

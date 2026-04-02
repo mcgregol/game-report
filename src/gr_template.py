@@ -495,11 +495,94 @@ class GameReportTemplate:
         sm_team_tbl = Table(sm_team_data, colWidths=left_colWidths, rowHeights=sm_team_row_heights, repeatRows=1, splitByRow=1)
         sm_team_tbl.setStyle(self._base_table_style())
 
+        # ------------------------------------------------------------------
+        # Conditional formatting – Total SupraMax column
+        # Green (high value) → Brown (mid) → Red (low value) gradient
+        # ------------------------------------------------------------------
+        def _gradient_color(v, v_min, v_max):
+            """Map a value in [v_min, v_max] to a green→brown→red colour."""
+            _green = (67, 160, 71)    # #43A047
+            _brown = (121, 85, 72)    # #795548
+            _red   = (229, 57, 53)    # #E53935
+            t = 0.5 if v_max == v_min else (v - v_min) / (v_max - v_min)  # 0=red end, 1=green end
+            t = max(0.0, min(1.0, t))
+            if t >= 0.5:
+                s = (t - 0.5) * 2                                         # 0..1 brown→green
+                lo, hi = _brown, _green
+            else:
+                s = t * 2                                                  # 0..1 red→brown
+                lo, hi = _red, _brown
+            r = int(lo[0] + s * (hi[0] - lo[0]))
+            g = int(lo[1] + s * (hi[1] - lo[1]))
+            b = int(lo[2] + s * (hi[2] - lo[2]))
+            return colors.Color(r / 255, g / 255, b / 255)
+
+        _supra_team_col = next(
+            (c for c in sm_team_df.columns if "supra" in c.lower()), None
+        )
+        if _supra_team_col:
+            _st_col_idx = list(sm_team_df.columns).index(_supra_team_col)
+            _st_raw = self.df_team_sm.get(_supra_team_col, sm_team_df[_supra_team_col])
+            _st_vals = pd.to_numeric(
+                _st_raw.astype(str).str.rstrip("%").str.strip(),
+                errors="coerce",
+            )
+            _st_min, _st_max = _st_vals.min(), _st_vals.max()
+            for _i, _v in enumerate(_st_vals, start=1):
+                if pd.isna(_v):
+                    continue
+                sm_team_tbl.setStyle(
+                    TableStyle([
+                        ("BACKGROUND",
+                         (_st_col_idx, _i), (_st_col_idx, _i),
+                         _gradient_color(_v, _st_min, _st_max))
+                    ])
+                )
+
         sm_relative_data = self.wrap_table_header(self.df_to_table_data(self.df_relative_sm.head(19)))
         right_colWidths = [col_w * 0.52, col_w * 0.24, col_w * 0.24]
         sm_relative_row_heights = [sm_header_h] + [None] * (len(sm_relative_data) - 1)
         sm_relative_tbl = Table(sm_relative_data, colWidths=right_colWidths, rowHeights=sm_relative_row_heights, repeatRows=1, splitByRow=1)
         sm_relative_tbl.setStyle(self._base_table_style())
+
+        # ------------------------------------------------------------------
+        # Conditional formatting – Avg SupraMax & Avg VHI columns
+        # red > 120 | 120 >= orange > 105 | 105 >= yellow > 95 | green <= 95
+        # ------------------------------------------------------------------
+        _cf_red    = colors.HexColor("#E53935")
+        _cf_orange = colors.HexColor("#FB8C00")
+        _cf_yellow = colors.HexColor("#FBC02D")
+        _cf_green  = colors.HexColor("#5CB85C")
+
+        def _threshold_color(v):
+            if v > 120:
+                return _cf_red
+            elif v > 105:
+                return _cf_orange
+            elif v > 95:
+                return _cf_yellow
+            else:
+                return _cf_green
+
+        _rel_df = self.df_relative_sm.head(19)
+        for _rel_col in _rel_df.columns:
+            _lc = _rel_col.lower()
+            if "supra" in _lc or "very high" in _lc or "vhi" in _lc:
+                _rc_idx = list(_rel_df.columns).index(_rel_col)
+                _rc_vals = pd.to_numeric(
+                    _rel_df[_rel_col].astype(str).str.rstrip("%").str.strip(),
+                    errors="coerce",
+                )
+                for _i, _v in enumerate(_rc_vals, start=1):
+                    if pd.isna(_v):
+                        continue
+                    sm_relative_tbl.setStyle(
+                        TableStyle([
+                            ("BACKGROUND",
+                             (_rc_idx, _i), (_rc_idx, _i),
+                             _threshold_color(_v))
+                        ])
+                    )
 
         # --------------------
         # Build Load Metrics tables (final polish)
@@ -585,7 +668,7 @@ class GameReportTemplate:
                         TableStyle([("BACKGROUND", (three_day_col_idx, i), (three_day_col_idx, i), orange)])
                     )
 
-        #  --- 7day Conditional formatting
+        #  --- 7day Conditional formatting ---
         if "(7day)" in freshness_df.columns and "Freshness (7 day)" in self.df_freshness.columns:
             seven_day_col_idx = list(freshness_df.columns).index("(7day)")
             seven_vals = pd.to_numeric(self.df_freshness["Freshness (7 day)"], errors="coerce")
@@ -813,7 +896,7 @@ class GameReportTemplate:
             )
         )
 
-        # Conditional formatting rules (per your screenshot)
+        # Conditional formatting rules
         red = colors.HexColor("#E53935")  # > 100
         orange = colors.HexColor("#FB8C00")  # 80–100
         yellow = colors.HexColor("#FBC02D")  # 60–80

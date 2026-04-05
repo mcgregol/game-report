@@ -134,7 +134,7 @@ class GameReportTemplate:
             preserveAspectRatio=True,
         )
         canvas.setFont("Arial", 14)
-        canvas.drawCentredString(inch * 7, inch * 10.905, f"Game Report - {self.game_date}")
+        canvas.drawCentredString(inch * 6.8, inch * 10.905, f"Game Report - {self.game_date}")
 
         canvas.restoreState()
 
@@ -154,6 +154,7 @@ class GameReportTemplate:
                 ("TOPPADDING", (0, 0), (-1, -1), 4),
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
                 ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER")
             ]
         )
 
@@ -244,7 +245,7 @@ class GameReportTemplate:
             fontName="Arial-Bold",
             fontSize=12,
             leading=14,
-            alignment=0,
+            alignment=1,
             spaceAfter=6,
         )
 
@@ -500,7 +501,7 @@ class GameReportTemplate:
         # Green (high value) → Brown (mid) → Red (low value) gradient
         # ------------------------------------------------------------------
         def _gradient_color(v, v_min, v_max):
-            """Map a value in [v_min, v_max] to a green→brown→red colour."""
+            """Map a value in [v_min, v_max] to a green→brown→red color."""
             _green = (67, 160, 71)    # #43A047
             _brown = (121, 85, 72)    # #795548
             _red   = (229, 57, 53)    # #E53935
@@ -555,11 +556,11 @@ class GameReportTemplate:
         _cf_green  = colors.HexColor("#5CB85C")
 
         def _threshold_color(v):
-            if v > 120:
+            if v >= 120:
                 return _cf_red
-            elif v > 105:
+            elif 120 > v > 105:
                 return _cf_orange
-            elif v > 95:
+            elif 105 >= v > 95:
                 return _cf_yellow
             else:
                 return _cf_green
@@ -585,7 +586,7 @@ class GameReportTemplate:
                     )
 
         # --------------------
-        # Build Load Metrics tables (final polish)
+        # Build Load Metrics tables
         #   - ensure consistent column counts (fixes misaligned rows)
         #   - plain header row (NOT bold)
         #   - balanced widths; name col wide enough for long names
@@ -872,7 +873,7 @@ class GameReportTemplate:
 
         # --- Column widths (fixed, names first) ---
         ncols = len(display_df.columns)
-        name_w = doc.width * 0.28  # tweak 0.26–0.32 if you want
+        name_w = doc.width * 0.28
         per_w = (doc.width - name_w) / (ncols - 1)
         col_widths = [name_w] + [per_w] * (ncols - 1)
 
@@ -885,7 +886,7 @@ class GameReportTemplate:
                     ("FONTSIZE", (0, 0), (-1, 0), 9),
                     ("FONTSIZE", (0, 1), (-1, -1), 9),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                    ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                    ("ALIGN", (0, 0), (0, -1), "CENTER"),
                     ("ALIGN", (1, 0), (-1, 0), "CENTER"),
                     ("ALIGN", (1, 1), (-1, -1), "CENTER"),
                     ("LEFTPADDING", (0, 0), (-1, -1), 6),

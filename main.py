@@ -45,7 +45,8 @@ num_freshness = input('Enter player freshness player count(blank for default): '
 ###############################
 #  Create custom client
 client = Client(
-    host=OLLAMA_HOST)
+    host=OLLAMA_HOST,
+    timeout=1)
 
 #  Hide tkinter
 Tk().withdraw()
@@ -126,8 +127,8 @@ stock_df4['Avg Supra Max Efforts'] = (stock_df4['Avg Supra Max Efforts'] * 100).
 stock_df4['Avg Very High Intensity Efforts'] = (stock_df4['Avg Very High Intensity Efforts'] * 100).round(3).astype(str) + '%'
 
 #  Convert xlsx to MD
-go_dtl_md = df1.round(2).to_markdown(index=False)
-freshness_md = df2.round(2).to_markdown(index=False)
+go_dtl_md = df1.copy().apply(lambda c: c.round(2) if pd.api.types.is_numeric_dtype(c) else c).to_markdown(index=False)
+freshness_md = df2.copy().apply(lambda c: c.round(2) if pd.api.types.is_numeric_dtype(c) else c).to_markdown(index=False)
 sm_team_md = df3.to_markdown(index=False)
 sm_relative_md = df4.to_markdown(index=False)
 

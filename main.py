@@ -45,8 +45,7 @@ num_freshness = input('Enter player freshness player count(blank for default): '
 ###############################
 #  Create custom client
 client = Client(
-    host=OLLAMA_HOST,
-    timeout=1)
+    host=OLLAMA_HOST)
 
 #  Hide tkinter
 Tk().withdraw()

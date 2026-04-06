@@ -254,7 +254,7 @@ class GameReportTemplate:
             parent=styles["BodyText"],
             fontName="Arial",
             fontSize=12,
-            leading=11,
+            leading=12,
             alignment=0,
             spaceBefore=4,
             spaceAfter=0,

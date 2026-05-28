@@ -7,7 +7,7 @@ import math
 
 from src.gr_template import GameReportTemplate
 
-OLLAMA_HOST = 'http://pop-os.local:11434'
+OLLAMA_HOST = 'http://192.168.1.10:11434'
 
 ###########################################
 #  Define function for creating data ranges
